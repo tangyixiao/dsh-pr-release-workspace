@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# local build/package leftovers (lib/ is generated but IS shipped, so it is not listed here)
+dist/
+*.tgz
+
+# editor and OS noise
+.DS_Store
+Thumbs.db
+*.log
+
+# local tool caches
+.cache/
+.npm/

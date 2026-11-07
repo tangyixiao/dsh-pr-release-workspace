@@ -1,0 +1,66 @@
+{
+  "name": "dsh-pr-release-workspace",
+  "version": "0.1.0",
+  "description": "PR and release workspace for DSH: grouped pull requests, file diffs, review comments, CI checks, and an evidence-backed release chain from merged PR to the live market index.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./icon": "./icon.svg",
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "locale/*.json",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "deepseek",
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "pull-request",
+    "code-review",
+    "diff",
+    "release",
+    "npm",
+    "market"
+  ],
+  "author": "Tang Yixiao",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tangyixiao/dsh-pr-release-workspace.git"
+  },
+  "homepage": "https://github.com/tangyixiao/dsh-pr-release-workspace#readme",
+  "bugs": {
+    "url": "https://github.com/tangyixiao/dsh-pr-release-workspace/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=22",
+    "dsh": ">=0.1.6-alpha.2"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "devDependencies": {
+    "diff": "^8.0.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

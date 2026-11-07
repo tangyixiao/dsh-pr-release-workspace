@@ -1,0 +1,12 @@
+# Loader rows for the PR & release workspace.
+#
+# `name` must be this package's name: the loader resolves it from the profile's
+# node_modules by package name, so a renamed row silently disables the bundle.
+#
+# Local hot reload: replace `name` with an absolute `file://` URL of lib/index.js
+# plus `?v=N`. The loader only re-imports when the row name changes, and Node ESM
+# keys its cache on the full URL, so bump N after editing lib/*.js and re-enable
+# the bundle.
+- insert:
+    - id: pr-release-workspace
+      name: dsh-pr-release-workspace
