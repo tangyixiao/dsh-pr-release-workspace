@@ -19,6 +19,7 @@
   "detail.conflicts": "Conflicts",
   "detail.diffCapped": "This pull request is larger than one diff; files were read individually.",
   "detail.diffFailed": "The diff could not be loaded.",
+  "detail.diffIncomplete": "This pull request changes more files than this panel will page through; the list below is incomplete.",
   "detail.drafts": "My notes",
   "detail.files": "Files",
   "detail.head": "from",

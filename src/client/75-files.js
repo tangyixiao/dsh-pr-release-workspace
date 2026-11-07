@@ -35,7 +35,14 @@
         'div',
         { style: { display: 'flex', flexDirection: 'column', gap: '2px' } },
         value.truncated === true
-          ? h('p', { className: 'prw-note', style: { margin: '0 0 8px' } }, t('detail.diffCapped'))
+          ? h(
+              'p',
+              { className: 'prw-note', style: { margin: '0 0 8px' } },
+              // `truncated` says GitHub would not render one diff; `complete`
+              // says whether the per-file read reached the end. They are
+              // different claims and a partial list must not look whole.
+              value.complete === false ? t('detail.diffIncomplete') : t('detail.diffCapped'),
+            )
           : null,
         value.files.map(function (file, index) {
           return h(FileRow, {
