@@ -106,6 +106,49 @@ test('the same line saved under a different SHA is a separate draft', async () =
   )
 })
 
+test('two saves in the same millisecond still come back in write order', async () => {
+  // This is the regression that made CI red while every local run was green:
+  // both saves landed inside one Date.now() tick, so both drafts carried the
+  // same updatedAt, "newest first" had no order to sort by, and the stale note
+  // surfaced above the current one. Ten saves make the collision near-certain.
+  const { store } = freshStore()
+
+  for (let index = 0; index < 10; index += 1) {
+    await store.save({ key: 'k', sha: 'sha1', path: `src/${index}.js`, line: 1, body: `note ${index}` })
+  }
+
+  const rows = await store.list({ key: 'k', headSha: 'sha1' })
+  assert.deepEqual(
+    rows.map((row) => row.body),
+    ['note 9', 'note 8', 'note 7', 'note 6', 'note 5', 'note 4', 'note 3', 'note 2', 'note 1', 'note 0'],
+  )
+
+  // Strictly decreasing: equal timestamps are what allowed the wrong order.
+  for (let index = 1; index < rows.length; index += 1) {
+    assert.ok(
+      rows[index - 1].updatedAt > rows[index].updatedAt,
+      `updatedAt must strictly decrease, got ${rows[index - 1].updatedAt} then ${rows[index].updatedAt}`,
+    )
+  }
+})
+
+test('the write-order guarantee survives a restart', async () => {
+  const { file, store } = freshStore()
+
+  await store.save({ key: 'k', sha: 'sha1', path: 'a.js', line: 1, body: 'first' })
+  await store.save({ key: 'k', sha: 'sha1', path: 'a.js', line: 2, body: 'second' })
+
+  // A second store reads the file from scratch, with no in-memory history.
+  const reopened = createDraftStore({ file })
+  await reopened.save({ key: 'k', sha: 'sha1', path: 'a.js', line: 3, body: 'third' })
+
+  const rows = await reopened.list({ key: 'k', headSha: 'sha1' })
+  assert.deepEqual(
+    rows.map((row) => row.body),
+    ['third', 'second', 'first'],
+  )
+})
+
 test('a draft with no path or line is a general note on the PR', async () => {
   const { store } = freshStore()
 
