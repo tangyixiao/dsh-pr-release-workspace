@@ -132,10 +132,16 @@ CI 只会是这几种之一：通过、失败、进行中、已取消、只有�
 
 ## 路由
 
-客户端通过 `POST /dsh-pr-release-workspace/<endpoint>` 与宿主通信。该路由只接受 `POST` 且
-`content-type: application/json`，拒绝跨站与外部 `Origin`，请求体上限 1 MiB，统一返回 JSON 信封：
+客户端通过 `POST /dsh-pr-release-workspace/<endpoint>` 与宿主通信。该路由会先询问组合的
+`connection` 服务——`connection.requestRejection(request)`——并原样透传它的 `401`/`403`；这道闸
+既执行 Host/Origin 规则，也要求启动令牌建立起来的浏览器会话 cookie。若 `connection` 抛错，则拒绝。
+之后该路由只接受 `POST` 且 `content-type: application/json`，请求体上限 1 MiB，统一返回 JSON 信封：
 `{"ok":true,"value":…}` 或 `{"ok":false,"error":{"code":…,"message":…}}`。端点名与 GitHub 的
 owner/repo/number 参数在进入 `gh` 之前都会按固定模式校验；`gh` 以参数数组启动，从不经过 shell 字符串。
+
+插件自身的本机校验（`Host` 为回环地址或服务绑定地址、出现的 `Origin` 与 `Host` 一致、无
+`sec-fetch-site: cross-site`）仍在 `connection` 闸之后执行。它保护的是完全没有 `connection`
+服务的组合——无头宿主或测试环境——否则那条路由就没有任何认证。
 
 ## 已知限制
 

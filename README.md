@@ -153,12 +153,20 @@ Nothing leaves the machine. Nothing is posted. Deleting a note deletes it.
 
 ## Routes
 
-The client talks to the host on `POST /dsh-pr-release-workspace/<endpoint>`. The route
-accepts only `POST` with `content-type: application/json`, rejects cross-site and foreign
-`Origin` requests, caps bodies at 1 MiB, and answers with a JSON envelope:
+The client talks to the host on `POST /dsh-pr-release-workspace/<endpoint>`. The route asks
+the composition's `connection` service first — `connection.requestRejection(request)` — and
+passes its `401`/`403` straight through; that fence applies the Host/Origin rules and then
+requires the browser session cookie the launch token established. A connection service that
+throws refuses. After that the route requires `POST` with `content-type: application/json`,
+caps bodies at 1 MiB, and answers with a JSON envelope:
 `{"ok":true,"value":…}` or `{"ok":false,"error":{"code":…,"message":…}}`. Endpoint names and
 GitHub owner/repo/number arguments are validated against a fixed pattern before they reach
 `gh`; `gh` is spawned with an argument array, never a shell string.
+
+The plugin's own local-only check (`Host` is loopback or the server's bind address, a present
+`Origin` matches `Host`, no `sec-fetch-site: cross-site`) still runs after the connection
+fence. It is what protects compositions that provide no `connection` service at all — a
+headless host or a test harness — where the route would otherwise have no authentication.
 
 ## Known limits
 
