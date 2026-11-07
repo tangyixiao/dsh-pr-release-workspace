@@ -23,6 +23,7 @@ import { createDraftStore } from '../lib/host/drafts.js'
 import { GhError } from '../lib/host/exec.js'
 import { loadBundle } from './support/client-harness.js'
 import { classifyGhFailure } from '../lib/host/exec.js'
+import { apply as applyHost } from '../lib/index.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const root = join(here, '..')
@@ -89,7 +90,7 @@ test('a Host header that merely starts with a loopback address is refused', () =
 test('the connection service rejects before any other check runs', () => {
   // A request that would otherwise be admitted: loopback Host, POST, JSON.
   const admitted = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
-  assert.equal(admitRequest({ request: admitted, webServer: {}, connection: {} }), undefined)
+  assert.equal(admitRequest({ request: admitted, webServer: {}, connection: { requestRejection: () => undefined } }), undefined)
 
   for (const status of [401, 403]) {
     const refusal = admitRequest({ request: admitted, webServer: {}, connection: { requestRejection: () => status } })
@@ -128,17 +129,38 @@ test('a connection service that throws refuses instead of admitting', () => {
   assert.doesNotMatch(refusal.text, /fence exploded/)
 })
 
-test('with no connection service the route still refuses non-local callers itself', () => {
-  // A headless composition has no connection service; that must not open the route.
+test('only an undefined connection verdict admits a request', () => {
   const local = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
-  assert.equal(admitRequest({ request: local, webServer: {} }), undefined)
-  assert.equal(admitRequest({ request: local, webServer: {}, connection: null }), undefined)
-  assert.equal(admitRequest({ request: local, webServer: {}, connection: {} }), undefined)
-  assert.equal(
-    admitRequest({ request: request({ host: '127.0.0.1:13787', 'sec-fetch-site': 'cross-site', 'content-type': 'application/json' }), webServer: {} })
-      ?.status,
-    403,
-  )
+  for (const verdict of [null, true, false, 0, 200, 500, '401', Promise.resolve(undefined)]) {
+    const connection = { requestRejection: () => verdict }
+    assert.equal(admitRequest({ request: local, webServer: {}, connection })?.status, 403)
+  }
+})
+
+test('a missing connection service or admission method refuses even a loopback JSON request', () => {
+  // Host and Origin headers cannot authenticate a non-browser caller.
+  const local = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
+  for (const connection of [undefined, null, {}, { requestRejection: null }, { requestRejection: true }]) {
+    assert.equal(admitRequest({ request: local, webServer: {}, connection })?.status, 403)
+    assert.equal(admitRequest({ request: { ...local, method: 'GET' }, webServer: {}, connection })?.status, 403)
+  }
+})
+
+test('the host exposes no route without a working connection admission method', () => {
+  for (const connection of [undefined, null, {}, { requestRejection: null }]) {
+    const registered = []
+    applyHost({
+      logger: { warn() {}, info() {} },
+      inject(_names, run) {
+        run({
+          connection,
+          webServer: { register(route) { registered.push(route) } },
+          effect() {},
+        })
+      },
+    })
+    assert.equal(registered.length, 0)
+  }
 })
 
 test('admission still checks the method and the content type after the fence', () => {
