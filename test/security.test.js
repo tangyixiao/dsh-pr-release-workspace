@@ -533,6 +533,27 @@ test('a rate limit reports how long to wait instead of pretending it is a generi
   assert.equal(classified.retryAfterSeconds, 30)
 })
 
+/**
+ * A PR over 300 files is refused by `gh pr diff` with a 406, and the panel can
+ * recover by paging the per-file endpoint. That recovery is keyed on a distinct
+ * code, so this case must never collapse into `unknown` — which is exactly what
+ * it did before: the classifier replaced the stderr with a generic sentence, so
+ * the caller had nothing left to recognise and a 1680-file PR rendered as an
+ * error page in the real host.
+ */
+test('the "more than 300 files" refusal is its own recoverable code, not unknown', () => {
+  const stderr = [
+    'could not find pull request diff: HTTP 406: Sorry, the diff exceeded the maximum number of files (300).',
+    "Consider using 'List pull requests files' API or locally cloning the repository instead.",
+    'PullRequest.diff too_large',
+  ].join('\n')
+  const classified = classifyGhFailure({ code: 1 }, stderr)
+  assert.equal(classified.code, 'diff-too-large')
+  // The message is what the route may surface, so it must stay content-free.
+  assert.equal(/https?:\/\//.test(classified.message), false)
+  assert.equal(classified.message.includes('tangyixiao'), false)
+})
+
 // ---------------------------------------------------------------------------
 // The write guard is a promise, so it is asserted
 // ---------------------------------------------------------------------------

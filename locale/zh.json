@@ -19,6 +19,7 @@
   "detail.conflicts": "有冲突",
   "detail.diffCapped": "这个 PR 的改动超过单份 diff 的限额，已按文件逐个读取。",
   "detail.diffFailed": "diff 加载失败。",
+  "detail.diffIncomplete": "这个 PR 的改动文件数超过本面板的分页上限，下面的列表并不完整。",
   "detail.drafts": "我的批注",
   "detail.files": "文件",
   "detail.head": "来自",
