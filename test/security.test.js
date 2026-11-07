@@ -17,7 +17,7 @@ import { join, dirname } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-import { createEndpoints, dispatch, envelope, isTrustedLocalRequest, readJsonBody, WRITE_GUARD } from '../lib/host/routes.js'
+import { admitRequest, createEndpoints, dispatch, envelope, isTrustedLocalRequest, readJsonBody, WRITE_GUARD } from '../lib/host/routes.js'
 import { parsePullReference, parseUnifiedDiff, summariseChecks } from '../lib/host/pull.js'
 import { createDraftStore } from '../lib/host/drafts.js'
 import { GhError } from '../lib/host/exec.js'
@@ -80,6 +80,91 @@ test('a Host header that merely starts with a loopback address is refused', () =
   // 127.0.0.1.evil.example would pass a `startsWith` check.
   assert.equal(isTrustedLocalRequest(request({ host: '127.0.0.1.evil.example:80' }), {}), false)
   assert.equal(isTrustedLocalRequest(request({ host: 'localhost.evil.example:80' }), {}), false)
+})
+
+// ---------------------------------------------------------------------------
+// The connection fence: the composition's own trust service outranks ours
+// ---------------------------------------------------------------------------
+
+test('the connection service rejects before any other check runs', () => {
+  // A request that would otherwise be admitted: loopback Host, POST, JSON.
+  const admitted = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
+  assert.equal(admitRequest({ request: admitted, webServer: {}, connection: {} }), undefined)
+
+  for (const status of [401, 403]) {
+    const refusal = admitRequest({ request: admitted, webServer: {}, connection: { requestRejection: () => status } })
+    assert.equal(refusal?.status, status)
+  }
+})
+
+test('the connection fence runs before the method check, so a refusal is not an oracle', () => {
+  // Same refusal whether the caller used the right method and content type or not.
+  const good = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
+  const bad = { headers: { host: '127.0.0.1:13787' }, method: 'GET', url: '/x' }
+  const connection = { requestRejection: () => 401 }
+  assert.equal(admitRequest({ request: good, webServer: {}, connection })?.status, 401)
+  assert.equal(admitRequest({ request: bad, webServer: {}, connection })?.status, 401)
+})
+
+test('a connection service that throws refuses instead of admitting', () => {
+  // The whole point of the fence is that "we could not tell" is not "yes".
+  const warned = []
+  const refusal = admitRequest({
+    request: request({ host: '127.0.0.1:13787', 'content-type': 'application/json' }),
+    webServer: {},
+    connection: {
+      requestRejection: () => {
+        const error = new Error('fence exploded')
+        error.code = 'E_FENCE'
+        throw error
+      },
+    },
+    warn: (message) => warned.push(message),
+  })
+  assert.equal(refusal?.status, 403)
+  assert.equal(warned.length, 1)
+  assert.match(warned[0], /E_FENCE/)
+  // The thrown message must not be echoed to the caller.
+  assert.doesNotMatch(refusal.text, /fence exploded/)
+})
+
+test('with no connection service the route still refuses non-local callers itself', () => {
+  // A headless composition has no connection service; that must not open the route.
+  const local = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
+  assert.equal(admitRequest({ request: local, webServer: {} }), undefined)
+  assert.equal(admitRequest({ request: local, webServer: {}, connection: null }), undefined)
+  assert.equal(admitRequest({ request: local, webServer: {}, connection: {} }), undefined)
+  assert.equal(
+    admitRequest({ request: request({ host: '127.0.0.1:13787', 'sec-fetch-site': 'cross-site', 'content-type': 'application/json' }), webServer: {} })
+      ?.status,
+    403,
+  )
+})
+
+test('admission still checks the method and the content type after the fence', () => {
+  const connection = { requestRejection: () => undefined }
+  const headers = { host: '127.0.0.1:13787', 'content-type': 'application/json' }
+  assert.equal(
+    admitRequest({ request: { headers, method: 'GET', url: '/x' }, webServer: {}, connection })?.status,
+    405,
+  )
+  assert.equal(
+    admitRequest({
+      request: request({ host: '127.0.0.1:13787', 'content-type': 'text/plain' }),
+      webServer: {},
+      connection,
+    })?.status,
+    415,
+  )
+  // `charset` on the JSON type is still JSON.
+  assert.equal(
+    admitRequest({
+      request: request({ host: '127.0.0.1:13787', 'content-type': 'application/json; charset=utf-8' }),
+      webServer: {},
+      connection,
+    }),
+    undefined,
+  )
 })
 
 // ---------------------------------------------------------------------------
