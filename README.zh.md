@@ -140,8 +140,9 @@ CI 只会是这几种之一：通过、失败、进行中、已取消、只有�
 owner/repo/number 参数在进入 `gh` 之前都会按固定模式校验；`gh` 以参数数组启动，从不经过 shell 字符串。
 
 插件自身的本机校验（`Host` 为回环地址或服务绑定地址、出现的 `Origin` 与 `Host` 一致、无
-`sec-fetch-site: cross-site`）仍在 `connection` 闸之后执行。它保护的是完全没有 `connection`
-服务的组合——无头宿主或测试环境——否则那条路由就没有任何认证。
+`sec-fetch-site: cross-site`）仍在 `connection` 闸之后执行。这些请求头只提供额外边界，不能认证调用者。
+若组合没有 `connection` 服务，或服务没有 `requestRejection` 方法，插件不注册数据路由，面板无数据。
+若该方法在注册后消失，请求准入检查也会返回 `403`。
 
 ## 已知限制
 
