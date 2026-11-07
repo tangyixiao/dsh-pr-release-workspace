@@ -165,8 +165,10 @@ GitHub owner/repo/number arguments are validated against a fixed pattern before 
 
 The plugin's own local-only check (`Host` is loopback or the server's bind address, a present
 `Origin` matches `Host`, no `sec-fetch-site: cross-site`) still runs after the connection
-fence. It is what protects compositions that provide no `connection` service at all — a
-headless host or a test harness — where the route would otherwise have no authentication.
+fence. Those headers are an additional boundary; they do not authenticate a caller. If the
+composition has no `connection` service or no `requestRejection` method, the plugin registers
+no data route and the panel has no data. The admission check also refuses with `403` if that
+method disappears after registration.
 
 ## Known limits
 
