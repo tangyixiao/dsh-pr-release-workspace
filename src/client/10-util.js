@@ -34,6 +34,8 @@
         'state.rateLimited': 'GitHub asked us to slow down.',
         'state.retryIn': 'Try again in {seconds}s.',
         'state.offline': 'The Harness could not be reached.',
+        'compat.degraded':
+          'This Harness provides an older component set, so some controls fall back to plain markup.',
         'pr.draft': 'Draft',
         'pr.merged': 'Merged',
         'pr.closed': 'Closed',
@@ -144,6 +146,7 @@
         'state.rateLimited': 'GitHub 要求我们降低频率。',
         'state.retryIn': '{seconds} 秒后重试。',
         'state.offline': '无法连接到 Harness。',
+        'compat.degraded': '这个 Harness 的组件集较旧，部分控件已回退为普通元素。',
         'pr.draft': '草稿',
         'pr.merged': '已合并',
         'pr.closed': '已关闭',

@@ -18,7 +18,7 @@ Licence: MIT. Author: Tang Yixiao.
 
 | Requirement | Why |
 | --- | --- |
-| DSH `>= 0.1.6-alpha.2` | The panel uses the `sidebar.panellist` and `main` slots |
+| DSH `>= 0.1.6-alpha.2 < 0.3.0-0` | The panel uses the `sidebar.panellist` and `main` slots, which are unchanged from `0.1.6-alpha.2` through `0.2.2`. Verified on `0.2.2-rc.1`. |
 | Node `>= 22` | The host half uses `AbortSignal.any` |
 | [GitHub CLI](https://cli.github.com/) `gh` on `PATH`, signed in (`gh auth login`) | Every GitHub read goes through your existing `gh` session |
 | `read:org` scope for the team tab | `gh auth refresh -s read:org` if your token lacks it |
@@ -179,8 +179,17 @@ method disappears after registration.
 - A binary file has no text sides and renders as "binary file".
 - GitHub's search API allows 30 requests a minute. Reloading the three lists in a tight loop
   will hit the limit; the panel then says how long to wait.
-- DSH `0.1.6-alpha.2` has no native diff or review panel to reuse, so the diff view is built
-  on the `DiffBlock` component that ships with `@deepseek-ai/dsh-client-ui-primitives`.
+- DSH ships a native review surface on recent versions — the **Change requests & worktrees**
+  experimental plugin, which registers a tab in the right sidebar
+  (`sidebar.right.pane.tab`) and shows only the pull request bound to the current session.
+  That panel starts from a branch and therefore cannot answer "which of my open pull requests
+  did anyone review". This plugin is the other half: discovery across all three queues, search
+  by paste, and the release chain. The two run side by side and do not fight over a slot —
+  the official panel owns the right of the window, this one owns the left rail.
+- The diff view is built on the `DiffBlock` component that ships with
+  `@deepseek-ai/dsh-client-ui-primitives`. Both pieces are part of the host, not a dependency
+  this package installs; if a host ships an older component set, the affected controls fall
+  back to plain markup and the panel says so rather than rendering blank.
 
 ## Development
 
