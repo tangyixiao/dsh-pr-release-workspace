@@ -30,6 +30,102 @@
     })()
 
     /**
+     * What this host actually provides, read at load time rather than assumed
+     * from a version number.
+     *
+     * Two independent surfaces can shift under a panel: the shared primitives
+     * object (the shell seeds it, and a version could rename or drop a member)
+     * and the running Harness version itself (only some hosts publish it). Both
+     * are probed here, both tolerate absence, and neither is compared against a
+     * constant — the panel degrades and says so instead of drawing a blank.
+     */
+    PRW.compat = (function () {
+      var missing = []
+      var name
+      for (name in PRW.ui) {
+        if (!Object.prototype.hasOwnProperty.call(PRW.ui, name)) continue
+        if (name.indexOf('has') === 0) continue
+        if (PRW.ui[name] === null) missing.push(name)
+      }
+
+      var version = null
+      try {
+        var boot = typeof window === 'undefined' ? null : window.__DSH_BOOT__
+        if (boot !== null && boot !== undefined && boot.release && typeof boot.release.version === 'string') {
+          version = boot.release.version
+        }
+      } catch (error) {
+        version = null
+      }
+
+      return {
+        hostVersion: version,
+        missingPrimitives: missing,
+        degraded: missing.length > 0,
+      }
+    })()
+
+    /**
+     * Register one slot entry, tolerating a host that exposes only part of the
+     * slot service.
+     *
+     * Every DSH release so far has `inject` + `register`; a host that has only
+     * `register` still works because the entry is registered directly. A throw
+     * from either arm is reported and swallowed — a panel that cannot attach is
+     * better than a shell that fails to boot.
+     *
+     * @param {object} ctx
+     * @param {string} slotName
+     * @param {Function} make Builds the registration.
+     * @returns {any}
+     */
+    PRW.registerSlot = function registerSlot(ctx, slotName, make) {
+      var slots = ctx === null || ctx === undefined ? null : ctx.slots
+      if (slots === null || slots === undefined) return undefined
+      try {
+        if (typeof slots.inject === 'function') return slots.inject(slotName, make)
+        if (typeof slots.register === 'function') return make()
+      } catch (error) {
+        if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+          console.warn('[pr-release-workspace] could not register the ' + slotName + ' slot entry:', error)
+        }
+      }
+      return undefined
+    }
+
+    /**
+     * Register the panel's dictionaries and return its translator.
+     *
+     * A host without a locale service still gets a working panel: the shipped
+     * English dictionary is used directly, with the same `{name}` interpolation
+     * the service performs, so a missing service costs translations rather than
+     * blank labels.
+     *
+     * @param {object} ctx
+     * @param {string} namespace
+     * @returns {Function}
+     */
+    PRW.bindLocale = function bindLocale(ctx, namespace) {
+      var locale = ctx === null || ctx === undefined ? null : ctx.locale
+      if (
+        locale !== null &&
+        locale !== undefined &&
+        typeof locale.register === 'function' &&
+        typeof locale.bind === 'function'
+      ) {
+        ctx.effect(function () {
+          return locale.register(namespace, buildDictionaries())
+        }, 'pr-release-workspace: dictionaries')
+        return locale.bind(namespace)
+      }
+      var dict = buildDictionaries().en
+      return function (key, vars) {
+        var text = Object.prototype.hasOwnProperty.call(dict, key) ? dict[key] : key
+        return vars === null || vars === undefined ? text : fill(text, vars)
+      }
+    }
+
+    /**
      * Render a tag, falling back to a plain span when the primitive is absent.
      *
      * @param {object} props

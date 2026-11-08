@@ -104,7 +104,7 @@ in the file today — re-read them, do not trust this table if the file changed.
 | `version` | `"0.1.0"` | `0.1.0`, no suffix |
 | `files` | `["lib","locale/*.json","icon.svg","cordis.patch.yml","README.md","README.zh.md","LICENSE"]` | every entry must exist |
 | `exports` | `{".":"./lib/index.js","./client":"./lib/client.js","./icon":"./icon.svg","./locale/*.json":"./locale/*.json","./package.json":"./package.json"}` | every target must exist |
-| `engines.dsh` | `">=0.1.6-alpha.2"` | non-empty — the market build rejects a missing value |
+| `engines.dsh` | `">=0.1.6-alpha.2 <0.3.0-0"` | non-empty — the market build rejects a missing value. The upper bound must exclude `0.3.0` **and** `0.3.0-0`; `<0.3.0` alone lets a `0.3.0-0` prerelease through under `includePrerelease: true`. |
 | `engines.node` | `">=22"` | fine |
 | `publishConfig.registry` | `"https://registry.npmjs.org/"` | keep |
 | `publishConfig.access` | `"public"` | keep |

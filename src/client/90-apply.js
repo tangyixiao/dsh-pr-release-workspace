@@ -24,17 +24,16 @@
       PRW.ctx = ctx
       var NS = 'dsh-pr-release-workspace'
 
-      ctx.effect(function () {
-        return ctx.locale.register(NS, buildDictionaries())
-      }, 'pr-release-workspace: dictionaries')
-
-      var t = ctx.locale.bind(NS)
+      // Both of these probe the host instead of assuming it: a composition
+      // without a locale service still renders English, and a slot service that
+      // is missing one method still gets its registration.
+      var t = PRW.bindLocale(ctx, NS)
 
       ctx.effect(function () {
         return PRW.installStyles(PRW.CSS, 'prw-panel')
       }, 'pr-release-workspace: styles')
 
-      ctx.slots.inject('sidebar.panellist', function () {
+      PRW.registerSlot(ctx, 'sidebar.panellist', function () {
         return ctx.slots.register(
           {
             name: 'sidebar.panellist',
@@ -52,7 +51,7 @@
         )
       })
 
-      ctx.slots.inject('main', function () {
+      PRW.registerSlot(ctx, 'main', function () {
         return ctx.slots.register({ name: 'main', key: PANEL_ID }, function PullRequestsPanel() {
           return h(PRW.Shell, { t: t })
         })
@@ -77,9 +76,20 @@
       var pair = React.useState('workspace')
       var mode = pair[0]
       var setMode = pair[1]
+
+      // Say it once, at the top, when the host gave us less than a full component
+      // set. Silent degradation is the failure mode that looks like a bug in this
+      // panel, so the panel names it instead — a reader who sees plain markup
+      // should be able to tell that it is the host, not the data.
+      var notice =
+        PRW.compat.degraded === true
+          ? h('div', { className: 'prw-note prw-secondary', role: 'note' }, t('compat.degraded'))
+          : null
+
       return h(
         'div',
         { className: 'prw-root' },
+        notice,
         h(
           'div',
           { className: 'prw-tabs', style: { paddingTop: '12px' } },

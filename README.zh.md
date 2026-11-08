@@ -15,7 +15,7 @@
 
 | 要求 | 原因 |
 | --- | --- |
-| DSH `>= 0.1.6-alpha.2` | 面板用到 `sidebar.panellist` 和 `main` 两个扩展点 |
+| DSH `>= 0.1.6-alpha.2 < 0.3.0-0` | 面板用到 `sidebar.panellist` 和 `main` 两个扩展点；这两个扩展点从 `0.1.6-alpha.2` 到 `0.2.2` 没有变化。已在 `0.2.2-rc.1` 上实际验证。 |
 | Node `>= 22` | 宿主侧用到 `AbortSignal.any` |
 | `PATH` 上有 [GitHub CLI](https://cli.github.com/) `gh`，并且已登录（`gh auth login`） | 所有 GitHub 读取都走你现有的 `gh` 会话 |
 | 「团队待审」需要 `read:org` scope | 没有就 `gh auth refresh -s read:org` |
@@ -74,8 +74,12 @@ dsh plugin --profile <profile> remove dsh-pr-release-workspace
 某个列表加载失败就单独说失败。某个列表的团队成员身份无法确认，也单独说明 —— 绝不渲染成「没有内容」，
 因为「没法确认」和「确实没有」是两句话。
 
-搜索框接受粘贴的 `https://github.com/owner/repo/pull/123`、`owner/repo#123` 简写，或交给 GitHub 搜索的
-自由文本。
+搜索框接受两类输入，处理方式不同：
+
+- PR 引用直接打开那条 PR —— 粘贴的 `https://github.com/owner/repo/pull/123`、
+  `owner/repo/pull/123`、`owner/repo#123` 简写。单独的 `#123` 也认，落到当前在看的那个仓库上。
+- 其余内容作为自由文本交给 GitHub 搜索。当前没有在看任何 PR 时，单独的数字没有仓库可挂，
+  会退回搜索。
 
 ### PR 详情
 
@@ -150,8 +154,14 @@ owner/repo/number 参数在进入 `gh` 之前都会按固定模式校验；`gh` 
 - 超过 300 个文件的 diff 无法一次取回。面板改用逐文件 patch 重组，并注明这一点。
 - 二进制文件没有文本两侧，显示为「二进制文件」。
 - GitHub 搜索接口限速 30 次/分钟。连续快速刷新三个列表会触限，面板会告诉你还要等多久。
-- DSH `0.1.6-alpha.2` 没有原生 diff 或评审面板可复用，所以 diff 视图建在
-  `@deepseek-ai/dsh-client-ui-primitives` 自带的 `DiffBlock` 之上。
+- DSH 在较新版本里已经自带一个原生评审界面——设置里的实验性插件「变更请求与工作树」。
+  它注册在右侧栏（`sidebar.right.pane.tab`），只显示绑定到当前 Session 的那个 PR。
+  它的起点是分支，所以回答不了「我开着的这些 PR 里，哪些有人审过」。本插件是另一半：
+  三组队列的发现、粘贴链接搜索、以及发布链路。两者并存、不抢槽位——
+  官方面板占窗口右侧，本插件占左侧栏。
+- diff 视图建在 `@deepseek-ai/dsh-client-ui-primitives` 自带的 `DiffBlock` 之上。它和
+  primitives 都属于宿主本身，不是本包安装的依赖；若宿主提供的是较旧的组件集，受影响的控件
+  会降级为普通元素，面板也会明说，而不是渲染成空白。
 
 ## 开发
 

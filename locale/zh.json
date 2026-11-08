@@ -94,6 +94,7 @@
   "state.notSignedIn": "GitHub 尚未登录。",
   "state.notSignedInHint": "在终端执行 `gh auth login`，然后重新打开这个面板。",
   "state.offline": "无法连接到 Harness。",
+  "compat.degraded": "这个 Harness 的组件集较旧，部分控件已回退为普通元素。",
   "state.rateLimited": "GitHub 要求我们降低频率。",
   "state.refused": "GitHub 拒绝了这次请求。",
   "state.retryIn": "{seconds} 秒后重试。",

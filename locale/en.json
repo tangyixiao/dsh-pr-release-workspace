@@ -94,6 +94,7 @@
   "state.notSignedIn": "GitHub is not signed in.",
   "state.notSignedInHint": "Run `gh auth login` in a terminal, then reload this panel.",
   "state.offline": "The Harness could not be reached.",
+  "compat.degraded": "This Harness provides an older component set, so some controls fall back to plain markup.",
   "state.rateLimited": "GitHub asked us to slow down.",
   "state.refused": "GitHub refused the request.",
   "state.retryIn": "Try again in {seconds}s.",

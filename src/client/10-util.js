@@ -34,6 +34,8 @@
         'state.rateLimited': 'GitHub asked us to slow down.',
         'state.retryIn': 'Try again in {seconds}s.',
         'state.offline': 'The Harness could not be reached.',
+        'compat.degraded':
+          'This Harness provides an older component set, so some controls fall back to plain markup.',
         'pr.draft': 'Draft',
         'pr.merged': 'Merged',
         'pr.closed': 'Closed',
@@ -144,6 +146,7 @@
         'state.rateLimited': 'GitHub 要求我们降低频率。',
         'state.retryIn': '{seconds} 秒后重试。',
         'state.offline': '无法连接到 Harness。',
+        'compat.degraded': '这个 Harness 的组件集较旧，部分控件已回退为普通元素。',
         'pr.draft': '草稿',
         'pr.merged': '已合并',
         'pr.closed': '已关闭',
@@ -557,6 +560,35 @@
         }
       }
 
+      /**
+       * Whether the search box text is a pull request reference rather than a
+       * search phrase.
+       *
+       * This only decides WHICH request to make. The host owns the real parsing
+       * (`parsePullReference` in lib/host/pull.js) and rejects anything that is
+       * not a reference, so a wrong guess here costs one extra round trip and
+       * then falls back to search — it never lets a non-reference through as a
+       * target.
+       *
+       * Kept in step with the host on purpose: an anchored github.com URL,
+       * a scheme-less `owner/repo/pull/123`, `owner/repo#123`, and the bare
+       * `#123` / `123` form. Bare numbers need a repository to attach to, so
+       * reporting them as references is only right when one is in view.
+       *
+       * @param {string} text
+       * @returns {boolean}
+       */
+      function looksLikeReference(text) {
+        if (typeof text !== 'string') return false
+        var trimmed = text.trim()
+        if (trimmed.length === 0) return false
+        if (/^(?:https?:\/\/)?(?:www\.)?github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+(?:[/?#].*)?$/i.test(trimmed)) return true
+        if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+(?:[/?#].*)?$/.test(trimmed)) return true
+        if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+#\d+$/.test(trimmed)) return true
+        if (/^#?\d+$/.test(trimmed)) return true
+        return false
+      }
+
       return {
         ROUTE: ROUTE,
         call: call,
@@ -570,5 +602,6 @@
         dotFor: dotFor,
         toneFor: toneFor,
         activate: activate,
+        looksLikeReference: looksLikeReference,
       }
     })()
