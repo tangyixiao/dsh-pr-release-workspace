@@ -74,8 +74,12 @@ dsh plugin --profile <profile> remove dsh-pr-release-workspace
 某个列表加载失败就单独说失败。某个列表的团队成员身份无法确认，也单独说明 —— 绝不渲染成「没有内容」，
 因为「没法确认」和「确实没有」是两句话。
 
-搜索框接受粘贴的 `https://github.com/owner/repo/pull/123`、`owner/repo#123` 简写，或交给 GitHub 搜索的
-自由文本。
+搜索框接受两类输入，处理方式不同：
+
+- PR 引用直接打开那条 PR —— 粘贴的 `https://github.com/owner/repo/pull/123`、
+  `owner/repo/pull/123`、`owner/repo#123` 简写。单独的 `#123` 也认，落到当前在看的那个仓库上。
+- 其余内容作为自由文本交给 GitHub 搜索。当前没有在看任何 PR 时，单独的数字没有仓库可挂，
+  会退回搜索。
 
 ### PR 详情
 

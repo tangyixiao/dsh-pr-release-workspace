@@ -80,8 +80,14 @@ A list that could not be loaded says so, per list. A list whose team membership 
 confirmed says so — it is never rendered as "no results", because "we could not check" and
 "there is nothing" are different statements.
 
-The search box takes a pasted `https://github.com/owner/repo/pull/123` URL, the
-`owner/repo#123` shorthand, or free text passed to GitHub's search.
+The search box takes either kind of input, and treats them differently:
+
+- A pull request reference opens that PR directly — the pasted
+  `https://github.com/owner/repo/pull/123` URL, `owner/repo/pull/123`, or the
+  `owner/repo#123` shorthand. A bare `#123` works too, against the repository of
+  the PR currently in view.
+- Anything else is free text for GitHub's search. A bare number with no PR in
+  view has nothing to attach to, so it falls back to search.
 
 ### The pull request view
 

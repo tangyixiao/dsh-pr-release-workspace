@@ -1,6 +1,6 @@
 # 0.1.4 — Verified against DSH 0.2.2-rc.1
 
-**This release fixes a wrong statement, not a broken panel.**
+**This release fixes a wrong statement, and one real bug the statement was hiding.**
 
 0.1.3 works. It shipped a connection fence and it passed its tests. What was wrong was the
 claim underneath it: the baseline said the host was DSH `0.1.6-alpha.2`, and on that basis the
@@ -16,6 +16,25 @@ profile was reading the wrong tree, and every downstream document inherited the 
 The honest value comes out of the asar: 12 bytes of header, then a `uint32` header size, then a
 JSON directory, then the file data. Every forge package, the sidebar, the layout, the locale
 packages and the client connection package inside it are `0.2.2-rc.1`.
+
+## The bug under the claim
+
+Running the panel on the real host surfaced one: **pasting a pull request link searched for it
+instead of opening it.** The hint under the box has always said `owner/repo#123` or a github.com
+pull URL works, and the host has always had a `resolve` endpoint that parses exactly those — but
+no client code ever called it. The submitted text went straight to GitHub's search API, which
+returns nothing for a URL, so a paste came back as "no matches" for every PR including the one
+two inches away in the list.
+
+The box now routes on the shape of the input. A github.com pull URL, `owner/repo/pull/123`,
+`owner/repo#123`, or a bare `#123` / `123` goes to `resolve` and opens the detail view directly.
+Anything else — and any reference the host refuses, such as a bare number with no repository in
+view — falls back to search, so free text still answers honestly. `looksLikeReference` is only a
+routing hint; the host still owns the real parsing and refuses non-references with
+`bad-request`.
+
+Verified on a running 0.2.2-rc.1 host: both the URL and the shorthand open the PR, free text
+still searches, and Back returns to a clean list.
 
 ## What changed in the code
 
@@ -73,7 +92,8 @@ Nothing to migrate. No stored data changed shape; local notes are untouched.
 
 ## Tests
 
-159 cases, all passing. Two new files cover the compatibility work:
+166 cases, all passing. Three new files cover this release:
 `test/host-compat.test.js` (service lookup order, a proxy that throws on read, a connection
-without an admission method, version reporting) and `test/client-compat.test.js` (degraded
-primitives, a missing slot service, a missing locale service).
+without an admission method, version reporting), `test/client-compat.test.js` (degraded
+primitives, a missing slot service, a missing locale service) and `test/client-search.test.js`
+(which input goes to `resolve` and which goes to search).
