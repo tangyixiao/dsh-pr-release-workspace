@@ -560,6 +560,35 @@
         }
       }
 
+      /**
+       * Whether the search box text is a pull request reference rather than a
+       * search phrase.
+       *
+       * This only decides WHICH request to make. The host owns the real parsing
+       * (`parsePullReference` in lib/host/pull.js) and rejects anything that is
+       * not a reference, so a wrong guess here costs one extra round trip and
+       * then falls back to search — it never lets a non-reference through as a
+       * target.
+       *
+       * Kept in step with the host on purpose: an anchored github.com URL,
+       * a scheme-less `owner/repo/pull/123`, `owner/repo#123`, and the bare
+       * `#123` / `123` form. Bare numbers need a repository to attach to, so
+       * reporting them as references is only right when one is in view.
+       *
+       * @param {string} text
+       * @returns {boolean}
+       */
+      function looksLikeReference(text) {
+        if (typeof text !== 'string') return false
+        var trimmed = text.trim()
+        if (trimmed.length === 0) return false
+        if (/^(?:https?:\/\/)?(?:www\.)?github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+(?:[/?#].*)?$/i.test(trimmed)) return true
+        if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+(?:[/?#].*)?$/.test(trimmed)) return true
+        if (/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+#\d+$/.test(trimmed)) return true
+        if (/^#?\d+$/.test(trimmed)) return true
+        return false
+      }
+
       return {
         ROUTE: ROUTE,
         call: call,
@@ -573,5 +602,6 @@
         dotFor: dotFor,
         toneFor: toneFor,
         activate: activate,
+        looksLikeReference: looksLikeReference,
       }
     })()
