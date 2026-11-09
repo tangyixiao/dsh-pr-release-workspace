@@ -13,3 +13,7 @@ Thumbs.db
 # local tool caches
 .cache/
 .npm/
+
+work/
+
+__pycache__/
