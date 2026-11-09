@@ -4,7 +4,7 @@
 
 <p align="center">Review pull requests, diffs and local notes in DSH, then verify each release fact from merge to the live market.</p>
 
-<p align="center">[简体中文](README.zh.md) · [English](README.md)</p>
+<p align="center"><a href="README.zh.md">简体中文</a> · <a href="README.md">English</a></p>
 
 [![Stars](https://img.shields.io/github/stars/tangyixiao/dsh-pr-release-workspace?style=flat)](https://github.com/tangyixiao/dsh-pr-release-workspace/stargazers) [![CI](https://img.shields.io/github/actions/workflow/status/tangyixiao/dsh-pr-release-workspace/ci.yml?branch=main)](https://github.com/tangyixiao/dsh-pr-release-workspace/actions/workflows/ci.yml) [![License](https://img.shields.io/github/license/tangyixiao/dsh-pr-release-workspace)](LICENSE) [![npm](https://img.shields.io/npm/v/dsh-pr-release-workspace)](https://www.npmjs.com/package/dsh-pr-release-workspace)
 
