@@ -1,3 +1,5 @@
+<p><img src="assets/logo.webp" width="96" height="96" alt="dsh-pr-release-workspace logo"></p>
+
 # dsh-pr-release-workspace
 
 A pull request and release workspace for [DeepSeek Harness](https://github.com/deepseek-harness). It adds one sidebar entry that

@@ -7,7 +7,7 @@
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
-    "./icon": "./icon.svg",
+    "./icon": "./assets/logo.webp",
     "./locale/*.json": "./locale/*.json",
     "./package.json": "./package.json"
   },
@@ -18,7 +18,8 @@
     "cordis.patch.yml",
     "README.md",
     "README.zh.md",
-    "LICENSE"
+    "LICENSE",
+    "assets/logo.webp"
   ],
   "keywords": [
     "deepseek",
@@ -72,5 +73,6 @@
     "diff": "^8.0.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
-  }
+  },
+  "icon": "./assets/logo.webp"
 }

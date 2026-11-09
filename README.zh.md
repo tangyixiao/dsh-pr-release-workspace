@@ -1,3 +1,5 @@
+<p><img src="assets/logo.webp" width="96" height="96" alt="dsh-pr-release-workspace logo"></p>
+
 # dsh-pr-release-workspace
 
 [DeepSeek Harness](https://github.com/deepseek-harness) 的拉取请求与发布工作台。左侧加一个入口，做两件事：
