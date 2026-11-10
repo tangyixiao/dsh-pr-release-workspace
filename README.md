@@ -21,7 +21,7 @@
 Desktop: install the release `.tgz` through Extensions → Plugin Management → Add Plugin. For a Web profile you explicitly control:
 
 ```sh
-dsh plugin --profile web add dsh-pr-release-workspace@0.1.4
+dsh plugin --profile web add dsh-pr-release-workspace@0.1.5
 ```
 
 Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and paste a PR URL or `owner/repo#123`; team lists require the relevant `read:org` permission.
@@ -30,7 +30,7 @@ Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and p
 
 | Item | Current source of truth |
 | --- | --- |
-| Source version | `0.1.4` · 以 [package.json](package.json) 为准 |
+| Source version | `0.1.5` · 以 [package.json](package.json) 为准 |
 | Distribution | `npm` · [Releases](https://github.com/tangyixiao/dsh-pr-release-workspace/releases) |
 | DSH | `>=0.1.6-alpha.2 <0.3.0-0` |
 | Node.js | `>=22` |
