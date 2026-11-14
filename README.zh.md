@@ -21,7 +21,7 @@
 Desktop：从发行页下载 `.tgz`，在“扩展 → 插件管理 → 添加插件”中安装。命令行示例用于你明确控制的 Web profile：
 
 ```sh
-dsh plugin --profile web add dsh-pr-release-workspace@0.1.5
+dsh plugin --profile web add dsh-pr-release-workspace@0.1.6
 ```
 
 先安装并登录 GitHub CLI：`gh auth login`。打开左侧 Pull requests，粘贴完整 PR 链接或 `owner/repo#123`；团队列表需要对应 `read:org` 权限。
@@ -30,7 +30,7 @@ dsh plugin --profile web add dsh-pr-release-workspace@0.1.5
 
 | 项目 | 当前依据 |
 | --- | --- |
-| 源码版本 | `0.1.5` · 以 [package.json](package.json) 为准 |
+| 源码版本 | `0.1.6` · 以 [package.json](package.json) 为准 |
 | 分发方式 | `npm` · [Releases](https://github.com/tangyixiao/dsh-pr-release-workspace/releases) |
 | DSH | `>=0.1.6-alpha.2 <0.3.0-0` |
 | Node.js | `>=22` |
