@@ -133,7 +133,7 @@
      */
     function tag(props) {
       var Tag = PRW.ui.Tag
-      if (Tag !== null) return h(Tag, { tone: props.tone }, props.children)
+      if (Tag !== null && props.tone !== 'merged') return h(Tag, { tone: props.tone }, props.children)
       return h('span', { className: 'prw-badge', 'data-tone': props.tone }, props.children)
     }
 
@@ -200,6 +200,39 @@
           h('path', { key: 'e', d: 'M11.8 7.9v5.4' }),
           h('path', { key: 'f', d: 'M4.2 9.6c0-1.9 1.6-3.4 3.5-3.4h2.3' }),
         ], active ? { strokeWidth: 1.7 } : null)
+      }
+
+      function logo(size) {
+        return h('svg', { width: size || 20, height: size || 20, viewBox: '0 0 512 512',
+          'aria-hidden': 'true', focusable: 'false' },
+          h('image', { href: PRW.logoData, width: 512, height: 512 }))
+      }
+
+      function lifecycle(pr, size) {
+        if (pr.merged === true || pr.state === 'merged') {
+          return wrap(size, [
+            h('circle', { key: 'a', cx: 4, cy: 3, r: 1.7 }),
+            h('circle', { key: 'b', cx: 4, cy: 13, r: 1.7 }),
+            h('circle', { key: 'c', cx: 12, cy: 3, r: 1.7 }),
+            h('path', { key: 'd', d: 'M4 4.7v6.6M12 4.7v1.8C12 10 4 7 4 11.3' }),
+          ])
+        }
+        if (pr.state === 'closed') {
+          return wrap(size, [
+            h('circle', { key: 'a', cx: 4, cy: 3, r: 1.7 }),
+            h('circle', { key: 'b', cx: 4, cy: 13, r: 1.7 }),
+            h('path', { key: 'c', d: 'M4 4.7v6.6M9 3l4 4m0-4L9 7M11 9v4' }),
+          ])
+        }
+        if (pr.draft === true) {
+          return wrap(size, [
+            h('circle', { key: 'a', cx: 4, cy: 3, r: 1.7 }),
+            h('circle', { key: 'b', cx: 4, cy: 13, r: 1.7 }),
+            h('circle', { key: 'c', cx: 12, cy: 13, r: 1.7 }),
+            h('path', { key: 'd', d: 'M4 4.7v6.6M12 10V6a3 3 0 0 0-3-3', strokeDasharray: '1.5 2' }),
+          ])
+        }
+        return pr.state === 'open' ? pullRequest(size, false) : dots(size)
       }
 
       /** A chevron for disclosure rows. */
@@ -274,6 +307,8 @@
       }
 
       return {
+        logo: logo,
+        lifecycle: lifecycle,
         pullRequest: pullRequest,
         chevron: chevron,
         branch: branch,

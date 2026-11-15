@@ -270,7 +270,7 @@
         stale
           ? h('p', { className: 'prw-note', style: { margin: 0 } }, props.t('drafts.stale') + ' ' + props.t('drafts.staleHint'))
           : null,
-        h('div', { className: 'prw-body' }, PRW.util.bodyBlocks(draft.body)),
+        h('div', { className: 'prw-prose' }, PRW.util.bodyBlocks(draft.body)),
       )
     }
 
@@ -402,7 +402,7 @@
                   h('span', { className: 'prw-grow' }),
                   h('span', null, PRW.util.when(review.submittedAt, t)),
                 ),
-                review.body.length === 0 ? null : h('div', { className: 'prw-body' }, PRW.util.bodyBlocks(review.body)),
+                review.body.length === 0 ? null : h('div', { className: 'prw-prose' }, PRW.util.bodyBlocks(review.body)),
               )
             }),
           ),
@@ -427,7 +427,7 @@
                   h('span', { className: 'prw-grow' }),
                   h('span', null, PRW.util.when(comment.createdAt, t)),
                 ),
-                h('div', { className: 'prw-body' }, PRW.util.bodyBlocks(comment.body)),
+                h('div', { className: 'prw-prose' }, PRW.util.bodyBlocks(comment.body)),
               )
             }),
           ),
@@ -453,7 +453,7 @@
                   h('span', { className: 'prw-grow' }),
                   h('span', null, PRW.util.when(comment.createdAt, t)),
                 ),
-                h('div', { className: 'prw-body' }, PRW.util.bodyBlocks(comment.body)),
+                h('div', { className: 'prw-prose' }, PRW.util.bodyBlocks(comment.body)),
               )
             }),
           ),

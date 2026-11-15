@@ -1,0 +1,254 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-15T14:32:04.051Z",
+  "title": "Design System: PR & Release Workspace",
+  "extensions": {
+    "colorMeta": {
+      "accent": {
+        "role": "primary",
+        "displayName": "Host blue accent"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Dark root surface"
+      },
+      "surface-raised": {
+        "role": "neutral",
+        "displayName": "Raised control surface"
+      },
+      "surface-active": {
+        "role": "neutral",
+        "displayName": "Active pill surface"
+      },
+      "surface-hover": {
+        "role": "neutral",
+        "displayName": "Hover surface"
+      },
+      "selection": {
+        "role": "neutral",
+        "displayName": "Selected row surface"
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Primary text"
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Secondary text"
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Muted metadata"
+      },
+      "border-subtle": {
+        "role": "neutral",
+        "displayName": "Subtle separator"
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Control border"
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Input border"
+      },
+      "success": {
+        "role": "semantic",
+        "displayName": "Success status"
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "Failure status"
+      },
+      "warning": {
+        "role": "semantic",
+        "displayName": "Warning status"
+      },
+      "merged": {
+        "role": "semantic",
+        "displayName": "Merged PR"
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Panel title",
+        "purpose": "Primary workspace or detail title."
+      },
+      "body": {
+        "displayName": "Interface text",
+        "purpose": "Chinese and English controls and content."
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "purpose": "Repository, author, update time and helper text."
+      },
+      "badge": {
+        "displayName": "Status label",
+        "purpose": "Separate PR lifecycle, CI and review facts."
+      },
+      "markdown": {
+        "displayName": "Markdown body",
+        "purpose": "Scoped descriptions, comments and local notes."
+      },
+      "mono": {
+        "displayName": "Code and references",
+        "purpose": "Source snippets, branches and technical identifiers."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "skeleton-pulse",
+        "value": "prwPulse 1.4s ease-in-out infinite",
+        "purpose": "Loading skeleton opacity .55 to 1; disabled by prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-columns-container-max",
+        "value": "1000px"
+      },
+      {
+        "name": "stacked-rows-container-max",
+        "value": "680px"
+      }
+    ],
+    "iconography": {
+      "source": "src/client/30-icons.js",
+      "logo": {
+        "sourceAsset": "assets/logo.webp",
+        "embedding": "Build-time data:image/webp;base64 in PRW.logoData; SVG image with 512-unit viewBox; no external fetch.",
+        "sidebarSize": "Host-provided size, 17px fallback",
+        "headingSize": "28px",
+        "headingGap": "9px",
+        "purpose": "Plugin identity; preserves existing artwork and attribution."
+      },
+      "lifecycle": {
+        "rowSize": "16px",
+        "badgeSize": "13px",
+        "badgeGap": "5px",
+        "viewBox": "0 0 16 16",
+        "strokeWidth": "1.4",
+        "accessibility": "Decorative, aria-hidden=true and focusable=false; status text remains visible.",
+        "precedence": [
+          "merged",
+          "closed",
+          "draft",
+          "open",
+          "unknown"
+        ],
+        "states": {
+          "open": {
+            "glyph": "PR branch",
+            "colorToken": "success"
+          },
+          "merged": {
+            "glyph": "Joined branch",
+            "colorToken": "merged"
+          },
+          "closed": {
+            "glyph": "Cross-marked branch",
+            "colorToken": "danger"
+          },
+          "draft": {
+            "glyph": "Dashed branch",
+            "dashArray": "1.5 2",
+            "rowColorToken": "text-muted",
+            "badgeColorToken": "text-secondary"
+          },
+          "unknown": {
+            "glyph": "Dots",
+            "rowColorToken": "text-muted",
+            "badgeColorToken": "text-secondary"
+          }
+        }
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Native outline action",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Styled native fallback when the shared host Button is unavailable; 34px minimum height.",
+      "html": "<button type=\"button\" class=\"ds-button\">刷新</button>",
+      "css": ".ds-button{font:13px/1.4 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;min-height:34px;padding:6px 12px;border:1px solid var(--dsw-alias-border-l2,#3c4451);border-radius:7px;background:var(--dsw-alias-bg-layer-2,#1c2027);color:var(--dsw-alias-label-primary,#edf0f4);cursor:pointer;white-space:nowrap}.ds-button:hover{background:var(--dsw-alias-interactive-bg-hover,#222833)}.ds-button:focus-visible{outline:2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color,#86a9ff);outline-offset:2px}.ds-button:disabled{opacity:.5;cursor:default}"
+    },
+    {
+      "name": "Pull request search",
+      "kind": "input",
+      "refersTo": "search",
+      "description": "36px search field with host theme overrides and a readable native placeholder.",
+      "html": "<input class=\"ds-search\" aria-label=\"搜索拉取请求\" placeholder=\"搜索拉取请求，或粘贴 PR 链接\">",
+      "css": ".ds-search{font:13px/1.5 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;width:100%;min-width:0;height:36px;padding:8px 12px;border:1px solid var(--dsw-alias-border-l3,#566071);border-radius:7px;background:var(--dsw-alias-bg-layer-2,#1c2027);color:var(--dsw-alias-label-primary,#edf0f4)}.ds-search::placeholder{color:var(--dsw-alias-label-tertiary,#9fa9b8);opacity:1}.ds-search:focus-visible{outline:2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color,#86a9ff);outline-offset:2px}"
+    },
+    {
+      "name": "Shell underline navigation",
+      "kind": "nav",
+      "description": "Primary tabs; active state uses a 2px accent underline.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"工作区\"><button type=\"button\" aria-current=\"page\">拉取请求</button><button type=\"button\">发布状态</button></nav>",
+      "css": ".ds-nav{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--dsw-alias-border-l1,#303641)}.ds-nav button{font:13px/1.4 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;min-height:34px;padding:10px 12px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--dsw-alias-label-primary,#edf0f4);cursor:pointer}.ds-nav button[aria-current=page]{color:var(--dsw-alias-brand-primary-new-colorprimary-new-color,#86a9ff);border-bottom-color:currentColor}.ds-nav button:hover{background:var(--dsw-alias-interactive-bg-hover,#222833)}.ds-nav button:focus-visible{outline:2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color,#86a9ff);outline-offset:2px}"
+    },
+    {
+      "name": "Local filter pill",
+      "kind": "button",
+      "description": "Local navigation state distinct from shell underline tabs.",
+      "html": "<button type=\"button\" class=\"ds-pill\" aria-pressed=\"true\">我创建的</button>",
+      "css": ".ds-pill{font:13px/1.4 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;min-height:34px;padding:6px 12px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--dsw-alias-label-primary,#edf0f4);cursor:pointer}.ds-pill[aria-pressed=true]{background:var(--dsw-alias-bg-layer-3,#292f39);border-color:var(--dsw-alias-border-l2,#3c4451)}.ds-pill:hover{background:var(--dsw-alias-interactive-bg-hover,#222833)}.ds-pill:focus-visible{outline:2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color,#86a9ff);outline-offset:2px}"
+    },
+    {
+      "name": "Separate status facts",
+      "kind": "chip",
+      "refersTo": "status-badge",
+      "description": "Lifecycle, CI and review remain separate readable text labels. This example shows one possible state, not live evidence.",
+      "html": "<div class=\"ds-statuses\"><span class=\"ds-badge ds-success\"><svg width=\"13\" height=\"13\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"4.2\" cy=\"3.4\" r=\"1.7\"/><circle cx=\"4.2\" cy=\"12.6\" r=\"1.7\"/><circle cx=\"11.8\" cy=\"6.2\" r=\"1.7\"/><path d=\"M4.2 5.1v5.8\"/><path d=\"M11.8 7.9v5.4\"/><path d=\"M4.2 9.6c0-1.9 1.6-3.4 3.5-3.4h2.3\"/></svg><span>开放中</span></span><span class=\"ds-badge ds-warning\">检查进行中</span><span class=\"ds-badge\">暂无审查结论</span></div>",
+      "css": ".ds-statuses{display:flex;gap:5px;flex-wrap:wrap;align-items:center}.ds-badge{display:inline-flex;align-items:center;gap:5px;min-height:22px;padding:3px 7px;border:1px solid var(--dsw-alias-border-l2,#3c4451);border-radius:5px;font:11px/1.3 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;background:transparent;color:var(--dsw-alias-label-secondary,#c4cbd6);white-space:nowrap}.ds-success{color:var(--dsw-alias-state-success-primary,#82d5a2)}.ds-warning{color:var(--dsw-alias-state-warn-label,#e8be72)}.ds-badge>svg{flex:none}"
+    },
+    {
+      "name": "Detail card",
+      "kind": "card",
+      "refersTo": "detail-card",
+      "description": "Flat bordered content group; no component shadow.",
+      "html": "<section class=\"ds-card\"><h3>本地批注</h3><p>批注保存在本地，不会自动发布为 GitHub 评论。</p></section>",
+      "css": ".ds-card{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border:1px solid var(--dsw-alias-border-l2,#3c4451);border-radius:10px;font:13px/1.5 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;color:var(--dsw-alias-label-primary,#edf0f4)}.ds-card h3{font-size:13px;font-weight:600;margin:0}.ds-card p{margin:0}"
+    },
+    {
+      "name": "Scoped Markdown excerpt",
+      "kind": "custom",
+      "description": "A source-grounded typography sample for rendered descriptions, comments and notes.",
+      "html": "<article class=\"ds-markdown\"><h2>变更说明</h2><p>检查 <code>package.json</code> 与发布记录。</p><blockquote>合并不能证明市场已经发布。</blockquote><pre><code>npm test</code></pre></article>",
+      "css": ".ds-markdown{font:13px/1.75 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;color:var(--dsw-alias-label-primary,#edf0f4);min-width:0;overflow-wrap:anywhere}.ds-markdown>:first-child{margin-top:0}.ds-markdown>:last-child{margin-bottom:0}.ds-markdown h2{font-size:18px;line-height:1.4;font-weight:600;margin:22px 0 10px}.ds-markdown p{margin:0 0 12px}.ds-markdown code{font:12px ui-monospace,Consolas,monospace;background:var(--dsw-alias-bg-layer-2,#1c2027);border-radius:4px;padding:2px 5px}.ds-markdown blockquote{margin:12px 0;padding:4px 14px;border-left:2px solid var(--dsw-alias-border-l3,#566071);color:var(--dsw-alias-label-secondary,#c4cbd6)}.ds-markdown pre{margin:12px 0;padding:12px 14px;border-radius:8px;background:var(--dsw-alias-bg-layer-2,#1c2027);overflow:auto;line-height:1.6}.ds-markdown pre code{padding:0;border-radius:0;background:transparent}"
+    },
+    {
+      "name": "Lifecycle icon family",
+      "kind": "custom",
+      "description": "Actual source glyphs in row colors. Decorative icons accompany visible labels; draft and unknown are gray, pending CI remains amber.",
+      "html": "<div class=\"ds-lifecycles\"><span class=\"ds-lifecycle ds-open\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"4.2\" cy=\"3.4\" r=\"1.7\"/><circle cx=\"4.2\" cy=\"12.6\" r=\"1.7\"/><circle cx=\"11.8\" cy=\"6.2\" r=\"1.7\"/><path d=\"M4.2 5.1v5.8\"/><path d=\"M11.8 7.9v5.4\"/><path d=\"M4.2 9.6c0-1.9 1.6-3.4 3.5-3.4h2.3\"/></svg><span>开放中</span></span><span class=\"ds-lifecycle ds-merged\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"4\" cy=\"3\" r=\"1.7\"/><circle cx=\"4\" cy=\"13\" r=\"1.7\"/><circle cx=\"12\" cy=\"3\" r=\"1.7\"/><path d=\"M4 4.7v6.6M12 4.7v1.8C12 10 4 7 4 11.3\"/></svg><span>已合并</span></span><span class=\"ds-lifecycle ds-closed\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"4\" cy=\"3\" r=\"1.7\"/><circle cx=\"4\" cy=\"13\" r=\"1.7\"/><path d=\"M4 4.7v6.6M9 3l4 4m0-4L9 7M11 9v4\"/></svg><span>已关闭</span></span><span class=\"ds-lifecycle ds-draft\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"4\" cy=\"3\" r=\"1.7\"/><circle cx=\"4\" cy=\"13\" r=\"1.7\"/><circle cx=\"12\" cy=\"13\" r=\"1.7\"/><path d=\"M4 4.7v6.6M12 10V6a3 3 0 0 0-3-3\" stroke-dasharray=\"1.5 2\"/></svg><span>草稿</span></span><span class=\"ds-lifecycle ds-unknown\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"currentColor\" stroke=\"currentColor\" stroke-width=\"1.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><circle cx=\"4\" cy=\"8\" r=\"1\"/><circle cx=\"8\" cy=\"8\" r=\"1\"/><circle cx=\"12\" cy=\"8\" r=\"1\"/></svg><span>状态未知</span></span></div>",
+      "css": ".ds-lifecycles{display:flex;gap:12px;flex-wrap:wrap}.ds-lifecycle{display:inline-flex;align-items:center;gap:5px;font:13px/1.5 Inter,\"Segoe UI\",\"Microsoft YaHei\",sans-serif;color:var(--dsw-alias-label-tertiary,#9fa9b8)}.ds-lifecycle>svg{flex:none}.ds-lifecycle.ds-open{color:var(--dsw-alias-state-success-primary,#82d5a2)}.ds-lifecycle.ds-merged{color:#c7abff}.ds-lifecycle.ds-closed{color:var(--dsw-alias-state-error-primary,#ff9a9a)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Operate",
+    "overview": "Retain the host's compact, dark operational workspace: a clear search row, understated tabs, aligned pull request rows and readable detail content. This is a repair of the existing identity. The approved composition establishes the desktop list and narrow arrangement; the current implementation adds explicit lifecycle, CI and review labels and rendered Markdown.\n\nThe normative values below come from `src/client/20-styles.js`, `src/client/30-icons.js` and `src/client/50-parts.js`, including the stylesheet's later overrides. The frontmatter records dark fallback values; host `--dsw-alias-*` properties take precedence. These values are source declarations, not measured browser styles. The reference composition is a visual direction, not a runtime screenshot or product capability claim.",
+    "keyCharacteristics": [
+      "Compact Chinese and English typography with a consistent control height.",
+      "Flat surfaces, thin separators and restrained blue emphasis.",
+      "Separate, readable labels for PR lifecycle, CI and review.",
+      "Scoped Markdown that fits both desktop and narrow panels."
+    ],
+    "rules": [],
+    "dos": [
+      "Do preserve host alias overrides with explicit dark fallbacks.",
+      "Do show lifecycle, CI and review as separate text labels.",
+      "Do reuse the plugin artwork for entry branding and state-specific glyphs for PR lifecycle.",
+      "Do check real Chinese and English content in desktop and narrow panels.",
+      "Do keep Markdown styling scoped and wide code or tables locally scrollable."
+    ],
+    "donts": [
+      "Don't collapse unavailable status into success or an unexplained dash.",
+      "Don't let native fallback controls lose typography, borders or focus state.",
+      "Don't infer registry or market publication from a merged PR.",
+      "Don't present concept images, local captures or source tokens as live host verification."
+    ]
+  }
+}

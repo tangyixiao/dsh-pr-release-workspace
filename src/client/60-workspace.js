@@ -101,6 +101,11 @@
         [identity.state.status],
       )
       var groups = PRW.useRequest(groupsRun)
+      PRW.usePolling(function () {
+        if (selected !== null) return
+        if (submitted.length > 0) search.reload()
+        else groups.reload()
+      }, 60000, identity.state.status === 'ready')
 
       // A failed identity probe is the one error worth showing instead of the
       // tabs: nothing below it can work.
@@ -139,9 +144,10 @@
               { className: 'prw-tabs', role: 'tablist' },
               GROUP_TABS.map(function (entry) {
                 return h(
-                  (PRW.ui.Pill || 'button'),
+                  PRW.Pill,
                   {
                     key: entry.key,
+                    role: 'tab',
                     active: tab === entry.key,
                     onClick: function () {
                       setTab(entry.key)
@@ -154,9 +160,9 @@
           : h(
               'div',
               { className: 'prw-tabs' },
-              h((PRW.ui.Pill || 'button'), { active: true }, '“' + submitted + '”'),
+              h(PRW.Pill, { active: true }, '“' + submitted + '”'),
               h(
-                (PRW.ui.Pill || 'button'),
+                PRW.Pill,
                 {
                   onClick: function () {
                     setSubmitted('')
@@ -209,7 +215,7 @@
         h(
           'div',
           { className: 'prw-titleRow' },
-          h('h2', { className: 'prw-title' }, t('page.title')),
+          h('h2', { className: 'prw-title prw-brandTitle' }, PRW.icons.logo(28), t('page.title')),
           viewer === null
             ? null
             : h('span', { className: 'prw-note prw-truncate' }, '@' + viewer.login),
@@ -224,6 +230,8 @@
                 PRW.ui.Input === null
                   ? h('input', {
                       type: 'search',
+                      className: 'prw-input',
+                      'aria-label': t('search.placeholder'),
                       value: query,
                       placeholder: t('search.placeholder'),
                       onChange: function (event) {
@@ -307,6 +315,8 @@
         h(
           'div',
           { className: 'prw-list', role: 'list' },
+          h('div', { className: 'prw-listHead', 'aria-hidden': 'true' },
+            h('span', null, t('page.title')), h('span', null, t('list.status')), h('span', null, t('list.updated'))),
           items.map(function (item) {
             return h(prRow, {
               key: item.key,
@@ -337,6 +347,8 @@
       return h(
         'div',
         { className: 'prw-list', role: 'list' },
+          h('div', { className: 'prw-listHead', 'aria-hidden': 'true' },
+            h('span', null, t('page.title')), h('span', null, t('list.status')), h('span', null, t('list.updated'))),
         props.items.map(function (item) {
           return h(prRow, { key: item.key, item: item, active: false, onSelect: props.onSelect, t: t })
         }),

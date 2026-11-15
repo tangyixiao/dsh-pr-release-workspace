@@ -148,9 +148,17 @@ Three cases this is built to catch, all observed in the wild:
   they are logged; a GitHub error message can quote private text.
 - **It does not cache pull request content on disk.** Lists and diffs are re-fetched. The
   only file it writes is your own local notes.
-- **It does not render Markdown or HTML from GitHub.** Descriptions show as text with
-  `http(s)` links; a Markdown renderer is a large attack surface for a panel that can reach a
-  local HTTP route.
+- **Markdown is rendered locally.** Descriptions, comments and notes support headings,
+  lists, task lists, emphasis, quotes, tables and fenced code. Parser tokens become React
+  elements; raw HTML stays escaped. Only `http(s)` links are clickable, and remote images
+  appear as links so reading a PR does not automatically contact image servers.
+
+The PR list shows lifecycle, CI and review decisions separately. Checks come from the
+latest PR commit; unread or truncated check data cannot produce a passing verdict. Visible
+lists and overview/comments refresh every minute; polling pauses while the page is hidden
+or the files/notes view is active, preserving unsaved file notes. Refresh
+also remains available manually. Older hosts retain styled search, tabs and readable status
+text even when their component package is incomplete.
 
 ## Local notes and privacy
 
