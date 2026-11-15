@@ -14,7 +14,9 @@ test('PR bodies render headings, nested lists, emphasis, quotes, tables and task
   for (const tag of ['h2', 'strong', 'em', 's', 'ul', 'li', 'blockquote', 'table', 'th', 'td']) {
     assert.ok(html.includes('<' + tag), 'missing Markdown structure: ' + tag)
   }
-  assert.match(html, /type="checkbox" disabled="" readonly="" checked=""/)
+  // HTML attribute names are case-insensitive; React 19 serializes readOnly
+  // with a capital O, while React 18 emitted readonly.
+  assert.match(html, /type="checkbox" disabled="" readonly="" checked=""/i)
   assert.match(html, /prw-tableScroll/)
   assert.ok(!html.includes('<p class="prw-body"'), 'paragraphs must not inherit page padding or scrolling')
 })
