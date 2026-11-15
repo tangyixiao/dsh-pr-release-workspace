@@ -40,6 +40,13 @@
         'pr.merged': 'Merged',
         'pr.closed': 'Closed',
         'pr.open': 'Open',
+        'pr.unknown': 'PR state unavailable',
+        'review.approved': 'Approved',
+        'review.changes': 'Changes requested',
+        'review.required': 'Review required',
+        'review.none': 'No review decision',
+        'list.status': 'Status',
+        'list.updated': 'Updated',
         'pr.by': 'by',
         'pr.files': '{count} files',
         'pr.filesCapped': 'showing {shown} of {total}',
@@ -150,7 +157,14 @@
         'pr.draft': '草稿',
         'pr.merged': '已合并',
         'pr.closed': '已关闭',
-        'pr.open': '进行中',
+        'pr.open': '开放中',
+        'pr.unknown': 'PR 状态未读取',
+        'review.approved': '审查已通过',
+        'review.changes': '要求修改',
+        'review.required': '等待审查',
+        'review.none': '暂无审查结论',
+        'list.status': '状态',
+        'list.updated': '更新',
         'pr.by': '作者',
         'pr.files': '{count} 个文件',
         'pr.filesCapped': '显示 {shown} / 共 {total}',
@@ -446,31 +460,13 @@
       }
 
       /**
-       * Multi-line body text as paragraphs.
-       *
-       * Blank lines separate paragraphs; single newlines stay line breaks. Code
-       * fences are shown as their own block, unstyled but monospaced, because a
-       * review comment is often the only place a snippet appears.
+       * Render Markdown through the bundled parser and safe React token renderer.
        *
        * @param {string} text
        * @returns {Array}
        */
       function bodyBlocks(text) {
-        var source = typeof text === 'string' ? text.replace(/\r\n/g, '\n') : ''
-        if (source.trim().length === 0) return []
-        var chunks = source.split(/\n{2,}/)
-        var out = []
-        var i
-        for (i = 0; i < chunks.length; i += 1) {
-          var chunk = chunks[i]
-          var fence = /^```([\s\S]*?)```$/.exec(chunk.trim())
-          if (fence !== null) {
-            out.push(h('pre', { key: 'code-' + i, className: 'prw-code' }, fence[1].replace(/^\n+|\n+$/g, '')))
-            continue
-          }
-          out.push(h('p', { key: 'p-' + i, className: 'prw-body' }, safeText(chunk)))
-        }
-        return out
+        return PRW.renderMarkdown(text)
       }
 
       /**
@@ -499,7 +495,11 @@
           bucket = null
         }
         if (bucket === null || typeof bucket !== 'object' || typeof bucket.unit !== 'string') {
-          return date.toISOString().slice(0, 10)
+          var seconds = Math.max(0, Math.floor((Date.now() - at) / 1000))
+          bucket = seconds < 60 ? { unit: 'now', n: 0 }
+            : seconds < 3600 ? { unit: 'minutes', n: Math.floor(seconds / 60) }
+            : seconds < 86400 ? { unit: 'hours', n: Math.floor(seconds / 3600) }
+            : { unit: 'days', n: Math.floor(seconds / 86400) }
         }
         if (typeof t === 'function') {
           var text = t('time.' + bucket.unit)

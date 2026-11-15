@@ -38,6 +38,8 @@ Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and p
 
 GitHub reads use your existing gh session. Local notes are not automatically posted as GitHub comments, and a merged PR does not establish package or market publication.
 
+The workspace displays PR lifecycle, CI and review status separately and renders Markdown descriptions, comments and notes. Search, tabs and status text remain styled when older hosts lack shared components.
+
 [Detailed usage, configuration and troubleshooting](docs/guide.en.md)
 
 ## Development and participation

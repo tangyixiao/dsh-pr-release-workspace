@@ -83,23 +83,22 @@
       // should be able to tell that it is the host, not the data.
       var notice =
         PRW.compat.degraded === true
-          ? h('div', { className: 'prw-note prw-secondary', role: 'note' }, t('compat.degraded'))
+          ? h('div', { className: 'prw-note prw-compatNote', role: 'note' }, t('compat.degraded'))
           : null
 
       return h(
         'div',
-        { className: 'prw-root' },
-        notice,
+        { className: 'prw-root prw-shell' },
         h(
           'div',
           { className: 'prw-tabs', style: { paddingTop: '12px' } },
           h(
-            (PRW.ui.Pill || 'button'),
+            PRW.Pill,
             { active: mode === 'workspace', onClick: function () { setMode('workspace') } },
             t('page.title'),
           ),
           h(
-            (PRW.ui.Pill || 'button'),
+            PRW.Pill,
             { active: mode === 'release', onClick: function () { setMode('release') } },
             t('release.title'),
           ),
@@ -109,5 +108,6 @@
           { style: { flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' } },
           mode === 'release' ? h(PRW.Release, { t: t }) : h(PRW.Workspace, { t: t }),
         ),
+        notice,
       )
     }

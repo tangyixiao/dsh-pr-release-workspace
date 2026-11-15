@@ -109,10 +109,11 @@
       var pr = props.pr
       var t = props.t
       if (pr === null || pr === undefined) return null
-      if (pr.merged === true) return tag({ tone: 'success', children: t('pr.merged') })
+      if (pr.merged === true || pr.state === 'merged') return tag({ tone: 'merged', children: t('pr.merged') })
       if (pr.state === 'closed') return tag({ tone: 'danger', children: t('pr.closed') })
       if (pr.draft === true) return tag({ tone: 'warning', children: t('pr.draft') })
-      return tag({ tone: 'neutral', children: t('pr.open') })
+      if (pr.state === 'open') return tag({ tone: 'success', children: t('pr.open') })
+      return tag({ tone: 'neutral', children: t('pr.unknown') })
     }
 
     /**
@@ -155,31 +156,18 @@
             { className: 'prw-itemMeta' },
             h('span', { className: 'prw-itemRepo', title: repo }, repo),
             h('span', { className: 'prw-mono' }, item.headRefName || ''),
-            PRW.util.when(item.updatedAt, t) === ''
-              ? null
-              : h('span', null, PRW.util.when(item.updatedAt, t)),
           ),
         ),
         h(
           'div',
           { className: 'prw-itemTags' },
-          item.ci && item.ci.verdict !== 'not_configured' && item.ci.verdict !== 'unknown'
-            ? h(
-                'span',
-                { className: 'prw-row', title: ciLabel(item.ci.verdict, t) },
-                h(
-                  PRW.ui.StateDot || 'span',
-                  { state: PRW.util.dotFor(item.ci.verdict), size: 8 },
-                ),
-              )
-            : null,
-          item.draft === true ? tag({ tone: 'warning', children: t('pr.draft') }) : null,
-          item.reviewDecision === 'APPROVED'
-            ? tag({ tone: 'success', children: '✓' })
-            : item.reviewDecision === 'CHANGES_REQUESTED'
-              ? tag({ tone: 'danger', children: '!' })
-              : null,
+          prStateBadge({ pr: item, t: t }),
+          tag({ tone: PRW.util.toneFor(item.ci ? item.ci.verdict : 'unknown'),
+            children: ciLabel(item.ci ? item.ci.verdict : 'unknown', t) }),
+          reviewBadge(item, t),
         ),
+        h('time', { className: 'prw-itemTime', dateTime: item.updatedAt || undefined,
+          title: item.updatedAt || '' }, PRW.util.when(item.updatedAt, t)),
       )
     }
 
@@ -195,5 +183,21 @@
       if (Button !== null) {
         return h(Button, Object.assign({}, pass, { size: props.size || 'sm', variant: props.variant || 'ghost' }), props.children)
       }
-      return h('button', Object.assign({ type: 'button', className: 'prw-badge' }, pass), props.children)
+      return h('button', Object.assign({ type: 'button', className: 'prw-button' }, pass), props.children)
+    }
+
+    function reviewBadge(pr, t) {
+      var decision = pr.reviewDecision
+      var key = decision === 'APPROVED' ? 'review.approved'
+        : decision === 'CHANGES_REQUESTED' ? 'review.changes'
+        : decision === 'REVIEW_REQUIRED' ? 'review.required' : 'review.none'
+      return tag({ tone: decision === 'APPROVED' ? 'success'
+        : decision === 'CHANGES_REQUESTED' ? 'danger' : 'neutral', children: t(key) })
+    }
+
+    PRW.Pill = function Pill(props) {
+      return h('button', { type: 'button', className: 'prw-tab',
+        role: props.role, 'aria-selected': props.role === 'tab' ? props.active === true : undefined,
+        'aria-pressed': props.role === 'tab' ? undefined : props.active === true,
+        'data-active': props.active === true ? 'true' : 'false', onClick: props.onClick }, props.children)
     }

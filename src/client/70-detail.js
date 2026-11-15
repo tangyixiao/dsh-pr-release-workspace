@@ -29,12 +29,16 @@
       )
       var pull = PRW.useRequest(pullRun)
       var pr = pull.state.value
+      // File editors hold unsaved notes. Do not unmount them with a background
+      // reload; switching back to overview/comments resumes status polling.
+      PRW.usePolling(pull.reload, 60000, tab === 'overview' || tab === 'comments')
 
       var diffRun = React.useCallback(
         function (signal) {
+          if (pr === null) return Promise.resolve(null)
           return PRW.util.call('diff', toTargetPayload(target), { signal: signal })
         },
-        [target.key],
+        [target.key, pr === null ? null : pr.headSha],
       )
       var diff = PRW.useRequest(diffRun)
 
@@ -71,9 +75,10 @@
                 { key: 'drafts', label: 'detail.drafts' },
               ].map(function (entry) {
                 return h(
-                  (PRW.ui.Pill || 'button'),
+                  PRW.Pill,
                   {
                     key: entry.key,
+                    role: 'tab',
                     active: tab === entry.key,
                     onClick: function () {
                       setTab(entry.key)
@@ -149,6 +154,8 @@
           { className: 'prw-row', style: { gap: '8px', flexWrap: 'wrap' } },
           h('span', { className: 'prw-mono prw-muted' }, target.owner + '/' + target.repo + ' #' + target.number),
           pr === null ? null : prStateBadge({ pr: pr, t: t }),
+          pr === null ? null : tag({ tone: PRW.util.toneFor(pr.ci.verdict), children: ciLabel(pr.ci.verdict, t) }),
+          pr === null ? null : reviewBadge(pr, t),
           pr === null
             ? null
             : h('span', { className: 'prw-note' },

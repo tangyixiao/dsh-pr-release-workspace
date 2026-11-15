@@ -133,7 +133,7 @@
      */
     function tag(props) {
       var Tag = PRW.ui.Tag
-      if (Tag !== null) return h(Tag, { tone: props.tone }, props.children)
+      if (Tag !== null && props.tone !== 'merged') return h(Tag, { tone: props.tone }, props.children)
       return h('span', { className: 'prw-badge', 'data-tone': props.tone }, props.children)
     }
 

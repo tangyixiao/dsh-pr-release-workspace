@@ -38,6 +38,8 @@ dsh plugin --profile web add dsh-pr-release-workspace@0.1.6
 
 GitHub 读取使用已有 `gh` 会话。本地批注不会自动发布为 GitHub 评论；合并 PR 也不会自动证明包或市场已更新。
 
+工作台分别展示 PR 状态、CI 与审查结论，并渲染描述、评论和批注中的 Markdown。旧宿主缺少共享组件时，搜索、标签页与状态文字仍保留完整基础样式。
+
 [详细使用、配置与故障排查](docs/guide.zh-CN.md)
 
 ## 开发与参与
