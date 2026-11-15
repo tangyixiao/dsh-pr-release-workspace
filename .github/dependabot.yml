@@ -40,6 +40,12 @@
         "dependencies"
       ],
       "groups": {
+        "react-renderer": {
+          "patterns": [
+            "react",
+            "react-dom"
+          ]
+        },
         "compatible-packages": {
           "patterns": [
             "*"
