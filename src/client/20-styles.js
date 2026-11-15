@@ -15,6 +15,8 @@
       /* ---- layout ---- */
       '.prw-root{display:flex;flex-direction:column;height:100%;min-height:0;font-size:13px;line-height:1.5;color:var(--dsw-alias-label-primary,#edf0f4);}',
       '.prw-compatNote{flex:none;padding:7px 24px;border-top:1px solid var(--dsw-alias-border-l1,#303641);font-size:11px;}',
+      '.prw-brandTitle{display:flex;align-items:center;gap:9px;}.prw-brandTitle>svg{flex:none;}',
+      '.prw-prIcon{display:inline-flex;flex:none;align-self:center;color:var(--dsw-alias-label-tertiary,#9fa9b8);}.prw-prIcon[data-state="open"]{color:var(--dsw-alias-state-success-primary,#82d5a2);}.prw-prIcon[data-state="closed"]{color:var(--dsw-alias-state-error-primary,#ff9a9a);}.prw-prIcon[data-state="merged"]{color:#c7abff;}.prw-stateBadge{gap:5px;}.prw-stateBadge>svg{flex:none;}',
       '.prw-head{display:flex;flex-direction:column;gap:10px;padding:16px 20px 0;flex:none;}',
       '.prw-titleRow{display:flex;align-items:baseline;gap:10px;justify-content:space-between;}',
       '.prw-title{font-size:16px;font-weight:600;margin:0;}',

@@ -40,8 +40,20 @@ test('old hosts show readable PR, CI and review states instead of invisible dots
   const item = normaliseSearchNode({ ...base, state: 'MERGED', reviewDecision: 'APPROVED',
     ...commit([{ name: 'test', conclusion: 'SUCCESS' }]) })
   const html = renderToStaticMarkup(h(PRW.views.row, { item, t, onSelect() {} }))
+  assert.match(html, /prw-prIcon/)
+  assert.match(html, /<svg/)
   for (const text of ['已合并', '检查通过', '审查已通过']) assert.ok(html.includes(text), text)
   const unknown = renderToStaticMarkup(PRW.views.stateBadge({ pr: { state: 'unknown' }, t }))
   assert.ok(unknown.includes('PR 状态未读取'))
   assert.ok(!unknown.includes('进行中'))
+})
+
+test('closed draft PRs use the closed lifecycle icon, while merged PRs override the draft flag', async () => {
+  const { PRW } = await loadBundle({ primitives: {} })
+  const t = key => PRW.dicts.zh[key]
+  const closed = normaliseSearchNode({ ...base, state: 'CLOSED', isDraft: true })
+  const merged = normaliseSearchNode({ ...base, state: 'MERGED', isDraft: true })
+  const render = item => renderToStaticMarkup(h(PRW.views.row, { item, t, onSelect() {} }))
+  assert.match(render(closed), /class="prw-prIcon" data-state="closed"/)
+  assert.match(render(merged), /class="prw-prIcon" data-state="merged"/)
 })

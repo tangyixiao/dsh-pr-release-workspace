@@ -215,7 +215,7 @@
         h(
           'div',
           { className: 'prw-titleRow' },
-          h('h2', { className: 'prw-title' }, t('page.title')),
+          h('h2', { className: 'prw-title prw-brandTitle' }, PRW.icons.logo(28), t('page.title')),
           viewer === null
             ? null
             : h('span', { className: 'prw-note prw-truncate' }, '@' + viewer.login),

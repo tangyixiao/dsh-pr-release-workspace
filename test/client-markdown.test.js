@@ -33,3 +33,9 @@ test('links, entities and code render while raw HTML and hostile URLs remain ine
   assert.ok(!/href="(?:javascript:|data:)/i.test(html))
   assert.match(html, /rel="noreferrer noopener"/)
 })
+
+test('HTML comment terminators cannot activate HTML in PR text', async () => {
+  const html = await render('<!-- text --!><script>alert(1)</script>\n\n<!-- text --><img src=x onerror=alert(1)>')
+  assert.ok(!/<(?:script|img)\b/i.test(html))
+  assert.match(html, /&lt;script&gt;/)
+})

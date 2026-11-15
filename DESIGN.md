@@ -79,7 +79,7 @@ components:
 
 Retain the host's compact, dark operational workspace: a clear search row, understated tabs, aligned pull request rows and readable detail content. This is a repair of the existing identity. The approved composition establishes the desktop list and narrow arrangement; the current implementation adds explicit lifecycle, CI and review labels and rendered Markdown.
 
-The normative values below come from `src/client/20-styles.js` and `src/client/50-parts.js`, including the stylesheet's later overrides. The frontmatter records dark fallback values; host `--dsw-alias-*` properties take precedence. These values are source declarations, not measured browser styles. The reference composition is a visual direction, not a runtime screenshot or product capability claim.
+The normative values below come from `src/client/20-styles.js`, `src/client/30-icons.js` and `src/client/50-parts.js`, including the stylesheet's later overrides. The frontmatter records dark fallback values; host `--dsw-alias-*` properties take precedence. These values are source declarations, not measured browser styles. The reference composition is a visual direction, not a runtime screenshot or product capability claim.
 
 **Key Characteristics:**
 
@@ -102,14 +102,14 @@ Use host aliases at every supported theme boundary. Dark defaults make native co
 | `selection` | `--dsw-alias-button-ghost-active-fill` | Selected row and text selection |
 | `text` | `--dsw-alias-label-primary` | Primary text |
 | `text-secondary` | `--dsw-alias-label-secondary` | Secondary text and neutral badges |
-| `text-muted` | `--dsw-alias-label-tertiary` | Metadata, helper copy and placeholders |
+| `text-muted` | `--dsw-alias-label-tertiary` | Metadata, helper copy, placeholders and draft/unknown row icons |
 | `border-subtle` | `--dsw-alias-border-l1` | Row separators; also the skeleton fallback via `--dsw-alias-bg-skeleton` |
 | `border` | `--dsw-alias-border-l2` | List, card, badge and control borders |
 | `border-strong` | `--dsw-alias-border-l3` | Search/editor border and quote rule |
 | `success` | `--dsw-alias-state-success-primary` | Open, passing or approved status |
 | `danger` | `--dsw-alias-state-error-primary` | Closed, failing or changes requested status |
-| `warning` | `--dsw-alias-state-warn-label` | Draft or pending status; stale draft border uses `--dsw-alias-state-warn-primary` |
-| `merged` | None in current source | Merged PR badge |
+| `warning` | `--dsw-alias-state-warn-label` | Pending CI; stale local draft border uses `--dsw-alias-state-warn-primary` |
+| `merged` | None in current source | Merged PR icon and badge |
 
 Selected-row border uses `--dsw-alias-button-ghost-active-border` with the accent fallback. Status color supplements visible text; it does not replace it.
 
@@ -139,6 +139,8 @@ Use 7px control corners, a 9px list enclosure, 10px detail/comment/editor corner
 
 - **Search and actions:** search height is 36px; native buttons and pills have a 34px minimum height. Retain visible borders, readable placeholders, hover, disabled opacity .5 and keyboard focus when shared host components are unavailable. Prefer the shared host Button when present and the styled native fallback otherwise.
 - **Navigation:** distinguish the shell's underline tabs from local pills. Keep current/selected state exposed through the source's ARIA attributes. Tabs may wrap with the panel width.
+- **Plugin logo:** reuse `assets/logo.webp` for the plugin entry and workspace heading. The build embeds the original WebP as `PRW.logoData`; `PRW.icons.logo` displays it inside an SVG with a 512-unit viewBox, without an external fetch. The sidebar honors its host-provided size (17px fallback); the heading uses 28px with a 9px text gap. Preserve the artwork and its existing attribution; the logo does not communicate PR status.
+- **Lifecycle icons:** each row has a 16px `.prw-prIcon`; lifecycle badges pair a 13px glyph with visible status text and a 5px gap. Use the source's 16-unit inline SVG glyphs with 1.4px `currentColor` strokes, round caps and joins. Open uses the PR branch glyph in success green; merged uses the joined branch glyph in purple; closed uses a cross-marked branch in danger red. Draft rows use tertiary gray and a dashed branch (`1.5 2`); unknown rows use tertiary gray dots. Draft badge text and its inherited glyph use neutral gray; pending CI remains amber. Icons are decorative (`aria-hidden`, non-focusable); retain readable status text.
 - **PR row:** preserve title/repository hierarchy and the separate lifecycle, CI and review badges. Lifecycle precedence is merged, closed, draft, open, then unknown. CI labels distinguish success, failure, pending, cancelled, skipped, not configured and unknown. Review labels distinguish approved, changes requested, required and no decision. A missing fact must remain unknown or unconfigured as appropriate.
 - **Markdown:** scope all formatting to `.prw-markdown`. Use real paragraph/list/heading/quote structure, inline and fenced code, task checkboxes, links and a horizontally scrollable table wrapper. Paragraphs have a 12px bottom margin; lists use 24px indentation. Fenced code scrolls locally and retains its language label. Avoid global prose rules that alter host UI.
 - **Detail and comments:** use bordered cards, compact metadata and a raised comment surface. Local notes remain distinct from GitHub comments. Release facts stay individually readable: merge alone does not establish package or market publication.
@@ -150,6 +152,7 @@ Use 7px control corners, a 9px list enclosure, 10px detail/comment/editor corner
 
 - Do preserve host alias overrides with explicit dark fallbacks.
 - Do show lifecycle, CI and review as separate text labels.
+- Do reuse the plugin artwork for entry branding and state-specific glyphs for PR lifecycle.
 - Do check real Chinese and English content in desktop and narrow panels.
 - Do keep Markdown styling scoped and wide code or tables locally scrollable.
 
@@ -160,7 +163,7 @@ Use 7px control corners, a 9px list enclosure, 10px detail/comment/editor corner
 - Don't infer registry or market publication from a merged PR.
 - Don't present concept images, local captures or source tokens as live host verification.
 
-<!-- Documentation provenance: current CSS/parts and README inspected 2026-11-15.
+<!-- Documentation provenance: current CSS/icons/parts, build embedding, sidebar/header call sites and README inspected 2026-11-15.
 Approved composition: C:/Users/tangy/.codex/generated_images/01a1df84-fdbe-7612-b6b4-021389d8fccc/exec-99340c87-50c5-4314-9795-1ef1249d52c6.png
 Local implementation evidence: work/pr-state-markdown/desktop.jpg and detail-mobile.jpg.
 Formal context engine, seed and detector unavailable after download failure; no generated IDs, computed-style measurements or synthetic tonal ramps are claimed. -->

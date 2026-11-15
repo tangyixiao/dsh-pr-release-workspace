@@ -59,6 +59,8 @@ test('the sidebar entry renders an svg and tolerates a missing size', async () =
   assert.equal(withSize.type, 'svg')
   assert.equal(withSize.props.width, 18)
   assert.equal(withSize.props['aria-hidden'], 'true')
+  assert.equal(withSize.props.children.type, 'image')
+  assert.match(withSize.props.children.props.href, /^data:image\/webp;base64,/)
 
   const withoutSize = entry.component(undefined)
   assert.equal(withoutSize.type, 'svg')

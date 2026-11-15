@@ -109,11 +109,13 @@
       var pr = props.pr
       var t = props.t
       if (pr === null || pr === undefined) return null
-      if (pr.merged === true || pr.state === 'merged') return tag({ tone: 'merged', children: t('pr.merged') })
-      if (pr.state === 'closed') return tag({ tone: 'danger', children: t('pr.closed') })
-      if (pr.draft === true) return tag({ tone: 'warning', children: t('pr.draft') })
-      if (pr.state === 'open') return tag({ tone: 'success', children: t('pr.open') })
-      return tag({ tone: 'neutral', children: t('pr.unknown') })
+      var key = pr.merged === true || pr.state === 'merged' ? 'merged'
+        : pr.state === 'closed' ? 'closed' : pr.draft === true ? 'draft'
+        : pr.state === 'open' ? 'open' : 'unknown'
+      var tone = key === 'merged' ? 'merged' : key === 'closed' ? 'danger'
+        : key === 'open' ? 'success' : 'neutral'
+      return h('span', { className: 'prw-badge prw-stateBadge', 'data-tone': tone },
+        PRW.icons.lifecycle(pr, 13), h('span', null, t('pr.' + key)))
     }
 
     /**
@@ -148,6 +150,8 @@
           h(
             'div',
             { className: 'prw-itemTitle' },
+            h('span', { className: 'prw-prIcon', 'data-state': item.merged || item.state === 'merged' ? 'merged' : item.state === 'closed' ? 'closed' : item.draft ? 'draft' : item.state },
+              PRW.icons.lifecycle(item, 16)),
             h('span', { className: 'prw-itemNum' }, '#' + item.number),
             h('span', { className: 'prw-itemName' }, item.title || '(untitled)'),
           ),

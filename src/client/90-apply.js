@@ -45,8 +45,7 @@
           },
           function SidebarRequestsIcon(props) {
             var size = props !== null && props !== undefined && typeof props.size === 'number' ? props.size : 17
-            var active = props !== null && props !== undefined && props.active === true
-            return PRW.icons.pullRequest(size, active)
+            return PRW.icons.logo(size)
           },
         )
       })
