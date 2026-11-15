@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  renderer:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -35,3 +35,16 @@ jobs:
         run: npm install --no-save --package-lock=false --ignore-scripts --no-audit --no-fund react@18.3.1 react-dom@18.3.1
       - run: npm run build
       - run: npm test
+
+  # Branch protection requires the stable "test" context. Matrix job names
+  # include their dimensions, so aggregate both renderer results here.
+  test:
+    needs: renderer
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every renderer to pass
+        env:
+          RENDERER_RESULT: ${{ needs.renderer.result }}
+        run: test "$RENDERER_RESULT" = success
