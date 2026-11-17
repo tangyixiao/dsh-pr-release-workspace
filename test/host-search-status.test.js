@@ -1,11 +1,31 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { normaliseSearchNode } from '../lib/host/search.js'
+import { normaliseSearchNode, buildSearchQuery } from '../lib/host/search.js'
+import { createEndpoints } from '../lib/host/routes.js'
 import { createElement as h } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { loadBundle } from './support/client-harness.js'
 
 const base = { number: 7, title: 'PR', state: 'OPEN', repository: { nameWithOwner: 'o/r' } }
+
+test('all, open, merged and closed searches have distinct lifecycle scopes', () => {
+  const query = state => buildSearchQuery('author:@me', { state })
+  assert.equal(query('all'), 'is:pr author:@me sort:updated-desc')
+  assert.match(query('open'), / is:open /)
+  assert.match(query('merged'), / is:merged /)
+  assert.match(query('closed'), / is:closed is:unmerged /)
+  assert.ok(!query('merged').includes('is:open'))
+  assert.match(buildSearchQuery('author:@me'), / is:open /, 'legacy clients keep the previous default')
+  assert.equal(buildSearchQuery('author:@me', { openOnly: false }), query('all'))
+})
+
+test('invalid state filters are rejected before either route queries GitHub', async () => {
+  const endpoints = createEndpoints({ drafts: null, log: null })
+  for (const state of ['merged is:open', '', null, [], {}]) {
+    await assert.rejects(endpoints.groups({ state }, {}), error => error.code === 'bad-request')
+    await assert.rejects(endpoints.search({ query: 'fix', state }, {}), error => error.code === 'bad-request')
+  }
+})
 const commit = (nodes, extra = {}) => ({ commits: { nodes: [{ commit: { oid: 'sha', statusCheckRollup: {
   contexts: { nodes, totalCount: nodes.length, ...extra },
 } } }] } })

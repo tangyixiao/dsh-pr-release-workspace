@@ -40,6 +40,9 @@
       var submittedPair = React.useState('')
       var submitted = submittedPair[0]
       var setSubmitted = submittedPair[1]
+      var statePair = React.useState('all')
+      var prState = statePair[0]
+      var setPrState = statePair[1]
 
       var identity = PRW.useIdentity(true)
 
@@ -57,7 +60,7 @@
         function (signal) {
           if (submitted.length === 0) return Promise.resolve(null)
           if (PRW.util.looksLikeReference(submitted) === false) {
-            return PRW.util.call('search', { query: submitted, pageSize: 40 }, { signal: signal })
+            return PRW.util.call('search', { query: submitted, pageSize: 40, state: prState }, { signal: signal })
           }
           var fallback = selected === null || selected === undefined ? {} : { owner: selected.owner, repo: selected.repo }
           return PRW.util.call('resolve', { text: submitted, owner: fallback.owner, repo: fallback.repo }, { signal: signal })
@@ -68,12 +71,12 @@
               // Not a reference after all — the bare-number case with nothing in
               // view, most often. Text search is still a real answer for it.
               if (error !== null && typeof error === 'object' && error.code === 'bad-request') {
-                return PRW.util.call('search', { query: submitted, pageSize: 40 }, { signal: signal })
+                return PRW.util.call('search', { query: submitted, pageSize: 40, state: prState }, { signal: signal })
               }
               throw error
             })
         },
-        [submitted, selected],
+        [submitted, selected, prState],
       )
       var search = PRW.useRequest(searchRun)
 
@@ -96,9 +99,9 @@
       var groupsRun = React.useCallback(
         function (signal) {
           if (identity.state.status !== 'ready') return Promise.resolve(null)
-          return PRW.util.call('groups', { pageSize: 30 }, { signal: signal })
+          return PRW.util.call('groups', { pageSize: 30, state: prState }, { signal: signal })
         },
-        [identity.state.status],
+        [identity.state.status, prState],
       )
       var groups = PRW.useRequest(groupsRun)
       PRW.usePolling(function () {
@@ -141,7 +144,8 @@
         submitted.length === 0
           ? h(
               'div',
-              { className: 'prw-tabs', role: 'tablist' },
+              { className: 'prw-tabs prw-listTools' },
+              h('div', { className: 'prw-groupTabs', role: 'tablist' },
               GROUP_TABS.map(function (entry) {
                 return h(
                   PRW.Pill,
@@ -155,7 +159,8 @@
                   },
                   t(entry.label),
                 )
-              }),
+              })),
+              stateFilter({ t: t, value: prState, onChange: setPrState }),
             )
           : h(
               'div',
@@ -171,6 +176,7 @@
                 },
                 '×',
               ),
+              stateFilter({ t: t, value: prState, onChange: setPrState }),
             ),
         h(
           'div',
@@ -192,6 +198,15 @@
               : groupSection({ t: t, tab: tab, state: groups.state, onSelect: setSelected, onRetry: groups.reload }),
         ),
       )
+    }
+
+    function stateFilter(props) {
+      return h('label', { className: 'prw-stateFilter' },
+        h('span', null, props.t('filter.state')),
+        h('select', { value: props.value, onChange: function (event) { props.onChange(event.target.value) } },
+          ['all', 'open', 'merged', 'closed'].map(function (value) {
+            return h('option', { key: value, value: value }, props.t('filter.' + value))
+          })))
     }
 
     /**

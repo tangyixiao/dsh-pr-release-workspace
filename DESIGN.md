@@ -125,6 +125,8 @@ The root fills its host panel, uses a column flex layout, and establishes an inl
 
 The list is one bordered surface. Header and rows share `minmax(0,1fr) 300px 76px` columns and a 16px gap: title/repository, three status labels, then update time. Rows have a 72px minimum height and `13px 14px` padding. Long desktop titles truncate; repository metadata sits below the title.
 
+The state selector sits beside the group tabs, outside their ARIA tablist. It defaults to all states and also offers open, merged and closed without merge. Apply the selection to both grouped lists and text search. On narrow panels the labeled selector moves to a full-width row.
+
 At a container width of 1000px or less, status/time columns become 240px/70px with a 10px gap. At 680px or less, the header uses `16px 14px 0`, the body uses 14px, and the list header disappears. The title and repository span the row; badges and update time occupy the next line. Titles and repositories wrap, cards use 12px padding and key/value content can wrap. These are container queries, not viewport breakpoints.
 
 ## Elevation & Depth

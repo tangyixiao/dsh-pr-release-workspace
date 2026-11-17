@@ -25,6 +25,7 @@
       tag: tag,
       status: status,
       header: header,
+      stateFilter: stateFilter,
       groupSection: groupSection,
       listSection: listSection,
       detailHeader: detailHeader,
