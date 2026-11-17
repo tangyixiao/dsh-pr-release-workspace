@@ -10,8 +10,10 @@
  */
 
 import assert from 'node:assert/strict'
+import childProcess from 'node:child_process'
+import { syncBuiltinESMExports } from 'node:module'
 import { EventEmitter } from 'node:events'
-import { readFile, mkdtemp, rm, readdir } from 'node:fs/promises'
+import { readFile, mkdtemp, mkdir, rm, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, dirname } from 'node:path'
 import test from 'node:test'
@@ -90,7 +92,7 @@ test('a Host header that merely starts with a loopback address is refused', () =
 test('the connection service rejects before any other check runs', () => {
   // A request that would otherwise be admitted: loopback Host, POST, JSON.
   const admitted = request({ host: '127.0.0.1:13787', 'content-type': 'application/json' })
-  assert.equal(admitRequest({ request: admitted, webServer: {}, connection: { requestRejection: () => undefined } }), undefined)
+  assert.equal(admitRequest({ request: admitted, webServer: {}, connection: { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) } }), undefined)
 
   for (const status of [401, 403]) {
     const refusal = admitRequest({ request: admitted, webServer: {}, connection: { requestRejection: () => status } })
@@ -164,7 +166,7 @@ test('the host exposes no route without a working connection admission method', 
 })
 
 test('admission still checks the method and the content type after the fence', () => {
-  const connection = { requestRejection: () => undefined }
+  const connection = { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) }
   const headers = { host: '127.0.0.1:13787', 'content-type': 'application/json' }
   assert.equal(
     admitRequest({ request: { headers, method: 'GET', url: '/x' }, webServer: {}, connection })?.status,
@@ -684,5 +686,73 @@ test('no production source performs a write to GitHub', async () => {
     }
     assert.equal(/--method\s+(POST|PATCH|PUT|DELETE)/i.test(text), false, file + ' uses a write method')
     assert.equal(/\bgh\s+(api\s+--method|pr\s+(merge|comment|review|close|edit))/i.test(text), false, file + ' runs a write command')
+  }
+})
+
+
+test('rejected asynchronous Host verdicts fail closed without unhandled rejections or body access', async () => {
+  const untouched = new Proxy({}, { get() { throw new Error('request must not be read before Host approval') } })
+  for (const make of [
+    () => Promise.reject(new Error('asynchronous Host failure')),
+    () => ({ then(_resolve, reject) { reject(new Error('asynchronous thenable failure')) } }),
+    () => ({ get then() { throw new Error('broken thenable getter') } }),
+  ]) {
+    assert.equal(admitRequest({ request: untouched, webServer: {}, connection: { requestRejection: make } })?.status, 403)
+  }
+  await new Promise(resolve => setImmediate(resolve))
+})
+
+
+test('a throwing Host method getter refuses before touching the request', () => {
+  const untouched = new Proxy({}, { get() { throw new Error('request must stay untouched') } })
+  const connection = { get requestRejection() { throw new Error('Host method unavailable') } }
+  assert.equal(admitRequest({ request: untouched, webServer: {}, connection })?.status, 403)
+})
+
+
+test('only synchronous owner admission can use the host GitHub session or drafts', async t => {
+  await mkdir(join(root, 'work'), { recursive: true })
+  const home = await mkdtemp(join(root, 'work', 'owner-admission-'))
+  let ghCalls = 0, bodyReads = 0
+  t.mock.method(childProcess, 'execFile', () => { ghCalls++; throw new Error('must not launch gh') })
+  syncBuiltinESMExports()
+  t.after(async () => { t.mock.restoreAll(); syncBuiltinESMExports(); await rm(home, { recursive: true, force: true }) })
+  const connection = { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) }
+  const registered = []
+  applyHost({ logger: { warn() {}, info() {} }, inject: (_names, run) => run({ connection, webServer: { register: route => { registered.push(route); return () => {} } }, effect() {} }) }, { home })
+  assert.equal(registered.length, 1)
+  const denied = [
+    () => ({ peer: { principal: { kind: 'api' } } }),
+    () => ({ peer: { principal: { kind: 'guest' } } }),
+    () => undefined, () => null, () => false, () => ({}), () => ({ peer: {} }),
+    () => ({ rejection: undefined }), () => ({ rejection: 200 }),
+    () => Promise.resolve({ peer: { principal: { kind: 'owner' } } }),
+    () => Promise.reject(new Error('asynchronous owner failure')),
+    () => ({ then(_resolve, reject) { reject(new Error('owner thenable failure')) } }),
+    () => { throw new Error('broken owner admission') },
+  ]
+  for (const admit of denied) {
+    connection.admit = admit
+    for (const endpoint of ['identity', 'drafts', 'saveDraft']) {
+      let status
+      const req = { method: 'POST', url: '/dsh-pr-release-workspace/' + endpoint, headers: { host: '127.0.0.1:13787', 'content-type': 'application/json' }, on() { bodyReads++; throw new Error('must not read body') } }
+      await registered[0].handler(req, { writeHead(value) { status = value }, end() {} })
+      assert.equal(status, 403)
+    }
+  }
+  assert.equal(bodyReads, 0)
+  assert.equal(ghCalls, 0)
+  assert.deepEqual(await readdir(home), [])
+  const owner = { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) }
+  assert.equal(admitRequest({ request: request({ host: '127.0.0.1:13787', 'content-type': 'application/json' }), webServer: {}, connection: owner }), undefined, 'Desktop owner requests without Origin remain supported')
+  for (const admit of [undefined, null, true]) assert.equal(admitRequest({ request: request({}), connection: { requestRejection: () => undefined, admit } })?.status, 403)
+  await new Promise(resolve => setImmediate(resolve))
+})
+
+test('routes are not registered when owner admission is unavailable or its getter throws', () => {
+  for (const connection of [{ requestRejection: () => undefined }, { requestRejection: () => undefined, get admit() { throw new Error('broken owner getter') } }, { get requestRejection() { throw new Error('broken policy getter') } }]) {
+    const registered = []
+    applyHost({ logger: { warn() {}, info() {} }, inject: (_names, run) => run({ connection, webServer: { register: route => registered.push(route) }, effect() {} }) })
+    assert.equal(registered.length, 0)
   }
 })

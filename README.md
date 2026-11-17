@@ -21,7 +21,7 @@
 In Desktop, install the published npm package by name through Extensions → Plugin Management → Add Plugin. This keeps online updates available; local `.tgz` installs are for previews and manual recovery. For a Web profile you explicitly control:
 
 ```sh
-dsh plugin --profile web add dsh-pr-release-workspace@0.1.7
+dsh plugin --profile web add dsh-pr-release-workspace@0.1.8
 ```
 
 Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and paste a PR URL or `owner/repo#123`; team lists require the relevant `read:org` permission.
@@ -30,13 +30,13 @@ Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and p
 
 | Item | Current source of truth |
 | --- | --- |
-| Source version | `0.1.7` · 以 [package.json](package.json) 为准 |
+| Source version | `0.1.8` · 以 [package.json](package.json) 为准 |
 | Distribution | `npm` · [Releases](https://github.com/tangyixiao/dsh-pr-release-workspace/releases) |
-| DSH | `>=0.1.6-alpha.2 <0.3.0-0` |
+| DSH | `>=0.2.2-rc.1 <0.3.0-0` |
 | Node.js | `>=22` |
 | Development | [Open issues](https://github.com/tangyixiao/dsh-pr-release-workspace/issues?q=is%3Aissue+is%3Aopen) · [CI](https://github.com/tangyixiao/dsh-pr-release-workspace/actions) |
 
-GitHub reads use your existing gh session. Local notes are not automatically posted as GitHub comments, and a merged PR does not establish package or market publication.
+The host must provide synchronous `connection.requestRejection` and `connection.admit` APIs; only the authenticated owner may use these routes. Hosts lacking either API cannot serve panel data. GitHub reads use your existing gh session. Local notes are not automatically posted as GitHub comments, and a merged PR does not establish package or market publication.
 
 The workspace displays PR lifecycle, CI and review status separately and renders Markdown descriptions, comments and notes. Search, tabs and status text remain styled when older hosts lack shared components.
 

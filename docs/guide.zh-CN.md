@@ -21,7 +21,7 @@
 
 | 要求 | 原因 |
 | --- | --- |
-| DSH `>= 0.1.6-alpha.2 < 0.3.0-0` | 面板用到 `sidebar.panellist` 和 `main` 两个扩展点；这两个扩展点从 `0.1.6-alpha.2` 到 `0.2.2` 没有变化。已在 `0.2.2-rc.1` 上实际验证。 |
+| DSH `>= 0.2.2-rc.1 < 0.3.0-0` | 需要同步的 `connection.requestRejection`、`connection.admit` 和 owner principal；已核对官方 `0.2.2-rc.1` 与 `0.2.2-rc.3` 包中的契约。 |
 | Node `>= 22` | 宿主侧用到 `AbortSignal.any` |
 | `PATH` 上有 [GitHub CLI](https://cli.github.com/) `gh`，并且已登录（`gh auth login`） | 所有 GitHub 读取都走你现有的 `gh` 会话 |
 | 「团队待审」需要 `read:org` scope | 没有就 `gh auth refresh -s read:org` |
@@ -150,14 +150,16 @@ PR 列表分别展示开放／关闭／合并／草稿状态、CI 和审查结�
 
 客户端通过 `POST /dsh-pr-release-workspace/<endpoint>` 与宿主通信。该路由会先询问组合的
 `connection` 服务——`connection.requestRejection(request)`——并原样透传它的 `401`/`403`；这道闸
-既执行 Host/Origin 规则，也要求启动令牌建立起来的浏览器会话 cookie。若 `connection` 抛错，则拒绝。
+既执行 Host/Origin 规则，也要求已认证的浏览器或 API Peer。路由随后调用 `connection.admit`，
+仅在 `peer.principal.kind === "owner"` 时允许使用宿主的 GitHub 会话和本地批注。
+缺少方法、抛异常、无效返回值和异步返回值都会被拒绝。
 之后该路由只接受 `POST` 且 `content-type: application/json`，请求体上限 1 MiB，统一返回 JSON 信封：
 `{"ok":true,"value":…}` 或 `{"ok":false,"error":{"code":…,"message":…}}`。端点名与 GitHub 的
 owner/repo/number 参数在进入 `gh` 之前都会按固定模式校验；`gh` 以参数数组启动，从不经过 shell 字符串。
 
 插件自身的本机校验（`Host` 为回环地址或服务绑定地址、出现的 `Origin` 与 `Host` 一致、无
 `sec-fetch-site: cross-site`）仍在 `connection` 闸之后执行。这些请求头只提供额外边界，不能认证调用者。
-若组合没有 `connection` 服务，或服务没有 `requestRejection` 方法，插件不注册数据路由，面板无数据。
+若组合没有 `connection` 服务，或缺少 `requestRejection`、`admit` 中的任一方法，插件不注册数据路由，面板无数据。
 若该方法在注册后消失，请求准入检查也会返回 `403`。
 
 ## 已知限制
