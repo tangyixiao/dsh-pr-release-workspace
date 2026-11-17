@@ -98,7 +98,7 @@
   "review.none": "No review decision",
   "review.required": "Review required",
   "search.empty": "Nothing matches that search.",
-  "search.hint": "owner/repo#123 or a github.com pull request URL",
+  "search.hint": "Enter title keywords to search, or open a specific pull request using either format below. Press Enter to confirm.\nShort reference: GitHub account or organization/repository#number, e.g. tangyixiao/dsh-pr-release-workspace#23\nFull URL: https://github.com/tangyixiao/dsh-pr-release-workspace/pull/23",
   "search.placeholder": "Search pull requests, or paste a PR link",
   "sidebar.label": "Pull requests",
   "state.ghMissing": "The `gh` command is not available.",

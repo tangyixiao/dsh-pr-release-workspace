@@ -275,7 +275,7 @@
                 : button({ onClick: onRefresh, children: t('action.refresh') }),
             )
           : null,
-        searchable ? h('p', { className: 'prw-sub', style: { margin: 0 } }, t('search.hint')) : null,
+        searchable ? h('p', { className: 'prw-sub', style: { margin: 0, whiteSpace: 'pre-line', overflowWrap: 'anywhere' } }, t('search.hint')) : null,
       )
     }
 
