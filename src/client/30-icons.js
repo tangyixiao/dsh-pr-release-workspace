@@ -11,7 +11,12 @@
     PRW.ui = (function () {
       function pick(name) {
         var value = P === null || P === undefined ? undefined : P[name]
-        return typeof value === 'function' ? value : null
+        if (typeof value === 'function') return value
+        if (name !== 'diffTotals' && value !== null && typeof value === 'object') {
+          var kind = value.$$typeof
+          if (kind === Symbol.for('react.forward_ref') || kind === Symbol.for('react.memo')) return value
+        }
+        return null
       }
       return {
         Button: pick('Button'),

@@ -121,9 +121,11 @@ Markdown is 13px at 1.75 line height. Its headings use 22/18/16/14px, weight 600
 
 ## Layout
 
-The root fills its host panel, uses a column flex layout, and establishes an inline-size container. The body scrolls independently with `min-height:0`. Desktop header inset is `20px 24px 0`; body inset is `16px 24px 24px`. Search grows into available width beside the refresh action, with an 8px gap.
+The root fills its host panel, uses a column flex layout, and establishes an inline-size container. Its height is bounded by the visual viewport and any clipping ancestor, including hosts with auto-sized wrappers. The shell content flexes with a zero basis and the body scrolls independently with `min-height:0`; shell navigation stays outside that scroll region. Desktop header inset is `20px 24px 0`; body inset is `16px 24px 24px`. Search grows into available width beside the refresh action, with an 8px gap. A shared Input's wrapper fills the search column without introducing a second border around the styled input.
 
 The list is one bordered surface. Header and rows share `minmax(0,1fr) 300px 76px` columns and a 16px gap: title/repository, three status labels, then update time. Rows have a 72px minimum height and `13px 14px` padding. Long desktop titles truncate; repository metadata sits below the title.
+
+The state selector sits beside the group tabs, outside their ARIA tablist. It defaults to all states and also offers open, merged and closed without merge. Apply the selection to both grouped lists and text search. On narrow panels the labeled selector moves to a full-width row.
 
 At a container width of 1000px or less, status/time columns become 240px/70px with a 10px gap. At 680px or less, the header uses `16px 14px 0`, the body uses 14px, and the list header disappears. The title and repository span the row; badges and update time occupy the next line. Titles and repositories wrap, cards use 12px padding and key/value content can wrap. These are container queries, not viewport breakpoints.
 

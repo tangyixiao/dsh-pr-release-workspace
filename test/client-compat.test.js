@@ -13,7 +13,8 @@
 
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { createElement as h } from 'react'
+import { createElement as h, forwardRef, memo } from 'react'
+import * as primitives from './support/primitives-stub.js'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { loadBundle } from './support/client-harness.js'
 
@@ -22,6 +23,43 @@ test('a full host reports no missing primitives', async () => {
   assert.equal(PRW.compat.degraded, false)
   // The array is built inside the bundle's own realm, so compare by content.
   assert.equal(JSON.stringify(PRW.compat.missingPrimitives), '[]')
+})
+
+test('forwardRef and memo components render without a false degradation notice', async () => {
+  const Button = forwardRef((props, ref) => h('button', { ref }, props.children))
+  const Input = memo(primitives.Input)
+  const { PRW } = await loadBundle({ primitives: { ...primitives, Button, Input } })
+  assert.equal(PRW.compat.degraded, false)
+  assert.equal(PRW.ui.Button, Button)
+  assert.equal(PRW.ui.Input, Input)
+  assert.match(renderToStaticMarkup(h(PRW.ui.Button, null, '刷新')), /<button>刷新<\/button>/)
+  assert.match(renderToStaticMarkup(h(PRW.ui.Input, { placeholder: '搜索拉取请求' })), /placeholder="搜索拉取请求"/)
+})
+
+test('invalid component objects and wrapped utility functions still degrade safely', async () => {
+  const { PRW } = await loadBundle({ primitives: {
+    ...primitives, Button: {}, Input: { render() {} }, diffTotals: memo(() => null),
+  } })
+  assert.deepEqual(Array.from(PRW.compat.missingPrimitives).sort(), ['Button', 'Input', 'diffTotals'])
+})
+
+test('a panel in an auto-sized host is bounded by the visible viewport', async () => {
+  const { PRW } = await loadBundle()
+  const parent = { parentElement: null, getBoundingClientRect: () => ({ bottom: 1800, height: 1800 }) }
+  const node = { parentElement: parent, getBoundingClientRect: () => ({ top: 72 }) }
+  const view = { innerHeight: 800, getComputedStyle: () => ({ overflowY: 'visible' }) }
+  assert.equal(PRW.panelHeight(node, view), 728)
+})
+
+test('a panel respects clipped ancestors and the narrow visual viewport', async () => {
+  const { PRW } = await loadBundle()
+  const clip = { parentElement: null, getBoundingClientRect: () => ({ bottom: 620, height: 620 }) }
+  const contents = { parentElement: clip, getBoundingClientRect: () => ({ bottom: 0, height: 0 }) }
+  const node = { parentElement: contents, getBoundingClientRect: () => ({ top: 100 }) }
+  const view = { innerHeight: 800, getComputedStyle: () => ({ overflowY: 'hidden' }) }
+  assert.equal(PRW.panelHeight(node, view), 520)
+  view.visualViewport = { height: 400, offsetTop: 20 }
+  assert.equal(PRW.panelHeight(node, view), 320)
 })
 
 test('a host with an empty primitives object reports every one it lacks', async () => {
