@@ -121,7 +121,7 @@ Markdown is 13px at 1.75 line height. Its headings use 22/18/16/14px, weight 600
 
 ## Layout
 
-The root fills its host panel, uses a column flex layout, and establishes an inline-size container. The body scrolls independently with `min-height:0`. Desktop header inset is `20px 24px 0`; body inset is `16px 24px 24px`. Search grows into available width beside the refresh action, with an 8px gap.
+The root fills its host panel, uses a column flex layout, and establishes an inline-size container. Its height is bounded by the visual viewport and any clipping ancestor, including hosts with auto-sized wrappers. The shell content flexes with a zero basis and the body scrolls independently with `min-height:0`; shell navigation stays outside that scroll region. Desktop header inset is `20px 24px 0`; body inset is `16px 24px 24px`. Search grows into available width beside the refresh action, with an 8px gap. A shared Input's wrapper fills the search column without introducing a second border around the styled input.
 
 The list is one bordered surface. Header and rows share `minmax(0,1fr) 300px 76px` columns and a 16px gap: title/repository, three status labels, then update time. Rows have a 72px minimum height and `13px 14px` padding. Long desktop titles truncate; repository metadata sits below the title.
 

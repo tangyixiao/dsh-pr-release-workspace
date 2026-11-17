@@ -59,6 +59,20 @@
       PRW.t = t
     }
 
+    /** Bound the panel even when a host wrapper has an intrinsic height. */
+    PRW.panelHeight = function panelHeight(node, view) {
+      var top = node.getBoundingClientRect().top
+      var viewport = view.visualViewport
+      var bottom = viewport ? viewport.offsetTop + viewport.height : view.innerHeight
+      for (var parent = node.parentElement; parent; parent = parent.parentElement) {
+        var rect = parent.getBoundingClientRect()
+        if (rect.height > 0 && /hidden|clip|auto|scroll/.test(view.getComputedStyle(parent).overflowY)) {
+          bottom = Math.min(bottom, rect.bottom)
+        }
+      }
+      return Math.max(0, Math.floor(bottom - top))
+    }
+
     /**
      * The panel root: a small mode switch between the PR workspace and the release
      * state, so both live behind the one sidebar entry.
@@ -75,6 +89,35 @@
       var pair = React.useState('workspace')
       var mode = pair[0]
       var setMode = pair[1]
+      var element = React.useRef(null)
+      var bounds = React.useState(null)
+      var height = bounds[0]
+      var setHeight = bounds[1]
+
+      React.useEffect(function () {
+        var node = element.current
+        if (node === null) return undefined
+        function measure() { setHeight(PRW.panelHeight(node, window)) }
+        measure()
+        var observer = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null
+        if (observer !== null) {
+          for (var parent = node.parentElement; parent; parent = parent.parentElement) observer.observe(parent)
+        }
+        window.addEventListener('resize', measure)
+        var viewport = window.visualViewport
+        if (viewport) {
+          viewport.addEventListener('resize', measure)
+          viewport.addEventListener('scroll', measure)
+        }
+        return function () {
+          if (observer !== null) observer.disconnect()
+          window.removeEventListener('resize', measure)
+          if (viewport) {
+            viewport.removeEventListener('resize', measure)
+            viewport.removeEventListener('scroll', measure)
+          }
+        }
+      }, [])
 
       // Say it once, at the top, when the host gave us less than a full component
       // set. Silent degradation is the failure mode that looks like a bug in this
@@ -87,7 +130,7 @@
 
       return h(
         'div',
-        { className: 'prw-root prw-shell' },
+        { className: 'prw-root prw-shell', ref: element, style: { height: height === null ? '100%' : height + 'px' } },
         h(
           'div',
           { className: 'prw-tabs', style: { paddingTop: '12px' } },
@@ -104,7 +147,7 @@
         ),
         h(
           'div',
-          { style: { flex: '1 1 auto', minHeight: 0, display: 'flex', flexDirection: 'column' } },
+          { className: 'prw-shellContent' },
           mode === 'release' ? h(PRW.Release, { t: t }) : h(PRW.Workspace, { t: t }),
         ),
         notice,

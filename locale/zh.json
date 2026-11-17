@@ -12,7 +12,7 @@
   "ci.skipped": "仅有跳过的检查",
   "ci.success": "检查通过",
   "ci.unknown": "检查状态未知",
-  "compat.degraded": "这个 Harness 的组件集较旧，部分控件已回退为普通元素。",
+  "compat.degraded": "部分界面组件不可用，已启用兼容样式。",
   "detail.base": "合入",
   "detail.binary": "二进制文件，无文本差异。",
   "detail.checks": "检查",

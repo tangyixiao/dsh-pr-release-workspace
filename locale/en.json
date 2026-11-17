@@ -12,7 +12,7 @@
   "ci.skipped": "Only skipped checks",
   "ci.success": "Checks passed",
   "ci.unknown": "Check state unknown",
-  "compat.degraded": "This Harness provides an older component set, so some controls fall back to plain markup.",
+  "compat.degraded": "Some interface components are unavailable. Compatibility styles are in use.",
   "detail.base": "into",
   "detail.binary": "Binary file — no text diff.",
   "detail.checks": "Checks",
