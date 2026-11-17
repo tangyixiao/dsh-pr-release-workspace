@@ -36,7 +36,7 @@ test('services are read as properties when the context exposes them that way', (
   const registered = []
   run({
     webServer: webServer(registered),
-    connection: { requestRejection: () => undefined },
+    connection: { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) },
     effect() {},
   })
   assert.equal(registered.length, 1)
@@ -47,7 +47,7 @@ test('services are found through the reflective get when there are no properties
   const registered = []
   const services = {
     webServer: webServer(registered),
-    connection: { requestRejection: () => undefined },
+    connection: { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) },
   }
   run({
     get(name) {
@@ -62,7 +62,7 @@ test('a context that throws on an undeclared property still registers the route'
   const registered = []
   const services = {
     webServer: webServer(registered),
-    connection: { requestRejection: () => undefined },
+    connection: { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) },
   }
   const inner = {
     get(name) {
@@ -93,7 +93,7 @@ test('the reported host version comes from the live clientModules service', () =
   run(
     {
       webServer: webServer(registered),
-      connection: { requestRejection: () => undefined },
+      connection: { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) },
       clientModules: { release: { version: '0.2.2-rc.1' } },
       effect() {},
     },
@@ -110,7 +110,7 @@ test('a host that does not report a version says so instead of guessing', () => 
   run(
     {
       webServer: webServer([]),
-      connection: { requestRejection: () => undefined },
+      connection: { requestRejection: () => undefined, admit: () => ({ peer: { principal: { kind: 'owner' } } }) },
       effect() {},
     },
     { warn() {}, info: (message) => messages.push(String(message)) },

@@ -24,7 +24,7 @@ Licence: MIT. Author: Tang Yixiao.
 
 | Requirement | Why |
 | --- | --- |
-| DSH `>= 0.1.6-alpha.2 < 0.3.0-0` | The panel uses the `sidebar.panellist` and `main` slots, which are unchanged from `0.1.6-alpha.2` through `0.2.2`. Verified on `0.2.2-rc.1`. |
+| DSH `>= 0.2.2-rc.1 < 0.3.0-0` | Requires synchronous `connection.requestRejection` and `connection.admit` APIs with owner principals. These contracts are present in the official `0.2.2-rc.1` and `0.2.2-rc.3` packages. |
 | Node `>= 22` | The host half uses `AbortSignal.any` |
 | [GitHub CLI](https://cli.github.com/) `gh` on `PATH`, signed in (`gh auth login`) | Every GitHub read goes through your existing `gh` session |
 | `read:org` scope for the team tab | `gh auth refresh -s read:org` if your token lacks it |
@@ -176,8 +176,9 @@ Nothing leaves the machine. Nothing is posted. Deleting a note deletes it.
 The client talks to the host on `POST /dsh-pr-release-workspace/<endpoint>`. The route asks
 the composition's `connection` service first — `connection.requestRejection(request)` — and
 passes its `401`/`403` straight through; that fence applies the Host/Origin rules and then
-requires the browser session cookie the launch token established. A connection service that
-throws refuses. After that the route requires `POST` with `content-type: application/json`,
+requires an authenticated browser or API Peer. The route then calls `connection.admit` and
+requires `peer.principal.kind === "owner"` before it can use the host GitHub session or drafts.
+Missing methods, exceptions, malformed results and asynchronous verdicts are refused. After that the route requires `POST` with `content-type: application/json`,
 caps bodies at 1 MiB, and answers with a JSON envelope:
 `{"ok":true,"value":…}` or `{"ok":false,"error":{"code":…,"message":…}}`. Endpoint names and
 GitHub owner/repo/number arguments are validated against a fixed pattern before they reach
@@ -186,7 +187,7 @@ GitHub owner/repo/number arguments are validated against a fixed pattern before 
 The plugin's own local-only check (`Host` is loopback or the server's bind address, a present
 `Origin` matches `Host`, no `sec-fetch-site: cross-site`) still runs after the connection
 fence. Those headers are an additional boundary; they do not authenticate a caller. If the
-composition has no `connection` service or no `requestRejection` method, the plugin registers
+composition has no `connection` service or either `requestRejection` or `admit` is missing, the plugin registers
 no data route and the panel has no data. The admission check also refuses with `403` if that
 method disappears after registration.
 
