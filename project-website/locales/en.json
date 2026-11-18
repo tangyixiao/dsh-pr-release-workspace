@@ -1,0 +1,136 @@
+{
+  "meta": {
+    "description": "Keep authored, review and team pull requests in separate lists, examine changes, take local notes and check how far a release has progressed."
+  },
+  "pages": {
+    "home": {
+      "title": "Review pull requests and follow a release in DSH · {project}"
+    },
+    "features": {
+      "title": "Features · {project}",
+      "description": "Keep authored, review and team pull requests in separate lists, examine changes, take local notes and check how far a release has progressed."
+    },
+    "download": {
+      "title": "Get started · {project}",
+      "description": "Add dsh-pr-release-workspace by package name in DSH Desktop plugin management."
+    },
+    "community": {
+      "title": "Community · {project}",
+      "description": "Find usage guidance, follow discussions and review changes to this project."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "download": "Get started",
+    "community": "Community"
+  },
+  "ui": {
+    "skip_link": "Skip to main content",
+    "navigation": "Main navigation",
+    "open_navigation": "Open navigation",
+    "close_navigation": "Close navigation",
+    "language": "Choose language",
+    "theme": "Choose theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "platforms": "Supported platforms",
+    "github": "GitHub",
+    "view_image": "View full illustration",
+    "feature_more": "Explore features",
+    "download": "Read the workspace guide",
+    "release_notes": "Source repository",
+    "documentation": "Documentation",
+    "source": "Source repository",
+    "illustration": "First steps",
+    "license": "MIT"
+  },
+  "hero": {
+    "title": [
+      "Review pull requests and follow a release in DSH"
+    ],
+    "description": [
+      "Keep authored, review and team pull requests in separate lists, examine changes, take local notes and check how far a release has progressed."
+    ],
+    "primary_action": "Read the workspace guide",
+    "secondary_action": "Explore features"
+  },
+  "preview": {
+    "caption": "First steps",
+    "tabs": [
+      {
+        "label": "Get started",
+        "icon": "book"
+      }
+    ],
+    "items": [
+      {
+        "title": "Enable the workspace",
+        "description": "Add dsh-pr-release-workspace by package name in DSH Desktop plugin management.",
+        "icon": "book"
+      },
+      {
+        "title": "Open a pull request",
+        "description": "Sign in to GitHub CLI with gh auth login, then paste a PR address into Pull requests.",
+        "icon": "link"
+      }
+    ]
+  },
+  "features": {
+    "title": "Project features",
+    "groups": [
+      {
+        "title": "Review from a link",
+        "description": "Paste a PR URL or owner/repo#123 to open its changes. Workspace notes stay local.",
+        "detail": "",
+        "icon": "layers"
+      },
+      {
+        "title": "Check the release stages",
+        "description": "Inspect separate evidence for the merge, package, GitHub Release and live marketplace entry.",
+        "detail": "",
+        "icon": "book"
+      }
+    ]
+  },
+  "getting_started": {
+    "title": "Get started · {project}",
+    "steps": [
+      {
+        "title": "Enable the workspace",
+        "description": "Add dsh-pr-release-workspace by package name in DSH Desktop plugin management.",
+        "icon": "book"
+      },
+      {
+        "title": "Open a pull request",
+        "description": "Sign in to GitHub CLI with gh auth login, then paste a PR address into Pull requests.",
+        "icon": "link"
+      }
+    ]
+  },
+  "community": {
+    "title": "Community · {project}",
+    "description": "Find usage guidance, follow discussions and review changes to this project.",
+    "links": [
+      {
+        "label": "Help and feedback",
+        "description": "Browse existing reports or describe a reproducible problem.",
+        "icon": "book"
+      },
+      {
+        "label": "Join the discussion",
+        "description": "Read existing topics or share questions and ideas.",
+        "icon": "link"
+      },
+      {
+        "label": "Review changes",
+        "description": "Review open pull requests or prepare a contribution.",
+        "icon": "code"
+      }
+    ]
+  },
+  "footer": {
+    "copyright": "{copyright}"
+  }
+}
