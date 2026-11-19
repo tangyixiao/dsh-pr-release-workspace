@@ -1,6 +1,6 @@
 {
   "name": "dsh-pr-release-workspace",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "PR and release workspace for DSH: grouped pull requests, file diffs, review comments, CI checks, and an evidence-backed release chain from merged PR to the live market index.",
   "type": "module",
   "main": "lib/index.js",
@@ -24,7 +24,8 @@
     "assets/LICENSE-WHALE-ARTWORK",
     "docs/assets",
     "docs/release-notes-0.1.6.md",
-    "docs/release-notes-0.1.8.md"
+    "docs/release-notes-0.1.8.md",
+    "docs/release-notes-0.1.9.md"
   ],
   "keywords": [
     "deepseek",

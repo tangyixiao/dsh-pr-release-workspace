@@ -21,7 +21,7 @@
 Desktop：在“扩展 → 插件管理 → 添加插件”中输入已发布的 npm 包名，以便后续在线更新；本地 `.tgz` 用于预览和手动恢复。命令行示例用于你明确控制的 Web profile：
 
 ```sh
-dsh plugin --profile web add dsh-pr-release-workspace@0.1.8
+dsh plugin --profile web add dsh-pr-release-workspace@0.1.9
 ```
 
 先安装并登录 GitHub CLI：`gh auth login`。打开左侧 Pull requests，粘贴完整 PR 链接或 `owner/repo#123`；团队列表需要对应 `read:org` 权限。
@@ -30,7 +30,7 @@ dsh plugin --profile web add dsh-pr-release-workspace@0.1.8
 
 | 项目 | 当前依据 |
 | --- | --- |
-| 源码版本 | `0.1.8` · 以 [package.json](package.json) 为准 |
+| 源码版本 | `0.1.9` · 以 [package.json](package.json) 为准 |
 | 分发方式 | `npm` · [Releases](https://github.com/tangyixiao/dsh-pr-release-workspace/releases) |
 | DSH | `>=0.2.2-rc.1 <0.3.0-0` |
 | Node.js | `>=22` |
