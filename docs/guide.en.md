@@ -24,7 +24,7 @@ Licence: MIT. Author: Tang Yixiao.
 
 | Requirement | Why |
 | --- | --- |
-| DSH `>= 0.2.2-rc.1 < 0.3.0-0` | Requires synchronous `connection.requestRejection` and `connection.admit` APIs with owner principals. These contracts are present in the official `0.2.2-rc.1` and `0.2.2-rc.3` packages. |
+| DSH `>= 0.2.2-rc.1 < 0.3.0-0` | Requires synchronous `connection.requestRejection` and `connection.admit` APIs with owner principals. These contracts are present in the official `0.2.2-rc.1`, `0.2.2-rc.3` and `0.2.2-rc.5` packages. |
 | Node `>= 22` | The host half uses `AbortSignal.any` |
 | [GitHub CLI](https://cli.github.com/) `gh` on `PATH`, signed in (`gh auth login`) | Every GitHub read goes through your existing `gh` session |
 | `read:org` scope for the team tab | `gh auth refresh -s read:org` if your token lacks it |

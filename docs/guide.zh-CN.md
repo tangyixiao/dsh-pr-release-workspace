@@ -21,7 +21,7 @@
 
 | 要求 | 原因 |
 | --- | --- |
-| DSH `>= 0.2.2-rc.1 < 0.3.0-0` | 需要同步的 `connection.requestRejection`、`connection.admit` 和 owner principal；已核对官方 `0.2.2-rc.1` 与 `0.2.2-rc.3` 包中的契约。 |
+| DSH `>= 0.2.2-rc.1 < 0.3.0-0` | 需要同步的 `connection.requestRejection`、`connection.admit` 和 owner principal；已核对官方 `0.2.2-rc.1`、`0.2.2-rc.3` 和 `0.2.2-rc.5` 包中的契约。 |
 | Node `>= 22` | 宿主侧用到 `AbortSignal.any` |
 | `PATH` 上有 [GitHub CLI](https://cli.github.com/) `gh`，并且已登录（`gh auth login`） | 所有 GitHub 读取都走你现有的 `gh` 会话 |
 | 「团队待审」需要 `read:org` scope | 没有就 `gh auth refresh -s read:org` |

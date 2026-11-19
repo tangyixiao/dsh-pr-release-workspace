@@ -21,7 +21,7 @@
 In Desktop, install the published npm package by name through Extensions → Plugin Management → Add Plugin. This keeps online updates available; local `.tgz` installs are for previews and manual recovery. For a Web profile you explicitly control:
 
 ```sh
-dsh plugin --profile web add dsh-pr-release-workspace@0.1.8
+dsh plugin --profile web add dsh-pr-release-workspace@0.1.9
 ```
 
 Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and paste a PR URL or `owner/repo#123`; team lists require the relevant `read:org` permission.
@@ -30,7 +30,7 @@ Install and sign in to GitHub CLI with `gh auth login`. Open Pull requests and p
 
 | Item | Current source of truth |
 | --- | --- |
-| Source version | `0.1.8` · 以 [package.json](package.json) 为准 |
+| Source version | `0.1.9` · 以 [package.json](package.json) 为准 |
 | Distribution | `npm` · [Releases](https://github.com/tangyixiao/dsh-pr-release-workspace/releases) |
 | DSH | `>=0.2.2-rc.1 <0.3.0-0` |
 | Node.js | `>=22` |
